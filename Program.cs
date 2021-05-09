@@ -16,7 +16,7 @@ namespace BilibiliProjects
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Pictures());
+            Application.Run(new Search());
         }
     }
 }
