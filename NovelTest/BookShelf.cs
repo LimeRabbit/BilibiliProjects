@@ -7,7 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading.Tasks;                                                                                                          
 using System.Windows.Forms;
 
 namespace BilibiliProjects
@@ -19,16 +19,8 @@ namespace BilibiliProjects
         public BookShelf(Form form)
         {
             InitializeComponent();
-            MySqlite.InitDB();
             this.form = form;
-            if (!File.Exists(MySqlite.path))
-            {
-                Tools.CreateTable();  //不存在数据库，创建新表
-            }
-            else
-            {
-                GetData();  //存在数据库，查询
-            }
+                GetData();  
         }
 
         List<Chapter> chapters;
@@ -45,7 +37,8 @@ namespace BilibiliProjects
             List<ListViewItem> items = new List<ListViewItem>();
             for (int i = 0; i < chapters.Count; i++)
             {
-                string[] ss = { (i + 1).ToString(), chapters[i].novel, chapters[i].chapter,chapters[i].lastDate };
+                string[] ss = { (i + 1).ToString(), chapters[i].novel, 
+                    chapters[i].chapter,chapters[i].lastDate };
                 ListViewItem item = new ListViewItem(ss);
                 item.UseItemStyleForSubItems = false;
                 //搜索章节，标红
@@ -58,7 +51,7 @@ namespace BilibiliProjects
             listView1.Items.AddRange(items.ToArray());
         }
 
-        string keyword = "";
+        string keyword = ""; //搜索关键词
         private void textBox_search_TextChanged(object sender, EventArgs e)
         {
             keyword = textBox_search.Text.Trim();
@@ -71,12 +64,13 @@ namespace BilibiliProjects
             if (listView1.SelectedIndices.Count == 0)
                 return;
             int index = listView1.SelectedIndices[0];
+            Tools.InitSource(chapters[index].web);
             ReadChapter(chapters[index].site);
         }
         void ReadChapter(string address)
         {
             userClose = false; //不是用户主动关闭
-            new Form1(address).Show();
+            new ReadNovel(address).Show();
             Close();
         }
 

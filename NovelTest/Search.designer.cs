@@ -49,13 +49,15 @@ namespace BilibiliProjects
             this.label2 = new System.Windows.Forms.Label();
             this.textBox_chapter = new System.Windows.Forms.TextBox();
             this.button_mybooks = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.comboBox_Source = new System.Windows.Forms.ComboBox();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(21, 18);
+            this.label1.Location = new System.Drawing.Point(294, 14);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(83, 12);
             this.label1.TabIndex = 0;
@@ -63,7 +65,7 @@ namespace BilibiliProjects
             // 
             // textBox_keyword
             // 
-            this.textBox_keyword.Location = new System.Drawing.Point(110, 15);
+            this.textBox_keyword.Location = new System.Drawing.Point(383, 11);
             this.textBox_keyword.Name = "textBox_keyword";
             this.textBox_keyword.Size = new System.Drawing.Size(200, 21);
             this.textBox_keyword.TabIndex = 1;
@@ -71,11 +73,11 @@ namespace BilibiliProjects
             // 
             // button_ok
             // 
-            this.button_ok.Location = new System.Drawing.Point(316, 13);
+            this.button_ok.Location = new System.Drawing.Point(589, 9);
             this.button_ok.Name = "button_ok";
             this.button_ok.Size = new System.Drawing.Size(50, 23);
             this.button_ok.TabIndex = 2;
-            this.button_ok.Text = "搜";
+            this.button_ok.Text = "搜索";
             this.button_ok.UseVisualStyleBackColor = true;
             this.button_ok.Click += new System.EventHandler(this.button_ok_Click);
             // 
@@ -211,11 +213,35 @@ namespace BilibiliProjects
             this.button_mybooks.UseVisualStyleBackColor = true;
             this.button_mybooks.Click += new System.EventHandler(this.button_mybooks_Click);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(21, 14);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(53, 12);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "小说来源";
+            // 
+            // comboBox_Source
+            // 
+            this.comboBox_Source.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_Source.FormattingEnabled = true;
+            this.comboBox_Source.Items.AddRange(new object[] {
+            "31小说",
+            "悠悠书盟"});
+            this.comboBox_Source.Location = new System.Drawing.Point(80, 11);
+            this.comboBox_Source.Name = "comboBox_Source";
+            this.comboBox_Source.Size = new System.Drawing.Size(185, 20);
+            this.comboBox_Source.TabIndex = 11;
+            this.comboBox_Source.SelectedIndexChanged += new System.EventHandler(this.comboBox_Source_SelectedIndexChanged);
+            // 
             // Search
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1624, 747);
+            this.ClientSize = new System.Drawing.Size(1574, 747);
+            this.Controls.Add(this.comboBox_Source);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.button_mybooks);
             this.Controls.Add(this.textBox_chapter);
             this.Controls.Add(this.label2);
@@ -255,5 +281,7 @@ namespace BilibiliProjects
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox_chapter;
         private System.Windows.Forms.Button button_mybooks;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox comboBox_Source;
     }
 }

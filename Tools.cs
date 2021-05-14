@@ -14,6 +14,25 @@ namespace BilibiliProjects
 {
     public class Tools
     {
+        public static NovelSource source;
+        public static void InitSource(int index)
+        {
+            Tools.source = new NovelSource();
+            Tools.source.ID = index;
+            switch (index)
+            {
+                case 0:
+                    Tools.source.Site = "http://m.31xs.com/";
+                    Tools.source.SearchPage = "search.php";
+                    Tools.source.SearchKeyword = "keyword";
+                    break;
+                case 1:
+                    Tools.source.Site = "https://m.uutxt.com/";
+                    Tools.source.SearchPage = "SearchBook.php";
+                    Tools.source.SearchKeyword = "submit=&keyword";
+                    break;
+            }
+        }
         /// <summary>
         /// 保存图片
         /// </summary>
@@ -52,9 +71,10 @@ namespace BilibiliProjects
             }
             return fonts;
         }
+        //创建表，用于存储阅读进度
         public static void CreateTable()
         {
-            string sql = "create table bookshelf(novel text,chapter text,site text,date text)";
+            string sql = "create table bookshelf(novel text,chapter text,webIndex text,site text,date text)";
             MySqlite.ExecSql(sql);
         }
         /// <summary>  
@@ -87,7 +107,7 @@ namespace BilibiliProjects
         /// <param name="leftstr">左边文本</param>  
         /// <param name="rightstr">右边文本</param>  
         /// <returns>返回中间文本内容</returns>  
-        public static List<string> getAllBetweenText(string str, string leftstr, string rightstr)
+        public static List<string> getAllBetweenText(string str, string leftstr, string rightstr, bool deleteHtmlTag = false)
         {
             List<string> result = new List<string>();
             int left = str.IndexOf(leftstr);
@@ -101,6 +121,10 @@ namespace BilibiliProjects
                 int i2 = str.IndexOf(rightstr, i);
                 if (i2 == -1) break;
                 string tmp = str.Substring(i, i2 - i).Trim();
+                if(deleteHtmlTag)
+                {
+                    tmp = RemoveHtmlTag(tmp);
+                }
                 result.Add(tmp);
                 str = str.Substring(i2 + rightstr.Length);
             }
@@ -174,6 +198,17 @@ namespace BilibiliProjects
         }
     }
 
+    /// <summary>
+    /// 小说来源
+    /// </summary>
+    public class NovelSource
+    {
+        public int ID;
+        public string Site;
+        public string SearchPage;
+        public string SearchKeyword;
+    }
+
     class Novel
     {
         public Novel(string name, string author, string new1, string date)
@@ -181,9 +216,17 @@ namespace BilibiliProjects
             this.author = Tools.RemoveHtmlTag(author);
             lastDate = date;
             indexUrl = Tools.getBetweenText(name, "href=\"", "\"");
-            state = Tools.getBetweenText(name, "[", "]");
-            //去掉“完本”“连载”
-            this.name = Tools.RemoveHtmlTag(name).Substring(state.Length + 2);
+            if (name.IndexOf("完本") > -1 || name.IndexOf("连载") > -1)
+            {
+                state = Tools.getBetweenText(name, "[", "]");
+                //去掉“完本”“连载”
+                this.name = Tools.RemoveHtmlTag(name).Substring(state.Length + 2);
+            }
+            else
+            {
+                state = "";
+                this.name = Tools.RemoveHtmlTag(name);
+            }
             newUrl = Tools.getBetweenText(new1, "href=\"", "\"");
             newChapter = Tools.RemoveHtmlTag(new1);
         }
@@ -198,6 +241,8 @@ namespace BilibiliProjects
 
     public class Chapter
     {
+        public Chapter()
+        {}
         public Chapter(string chapter, string site)
         {
             this.chapter = chapter;
@@ -209,16 +254,10 @@ namespace BilibiliProjects
             this.chapter = chapter;
             this.site = site;
         }
-        public Chapter(string novel, string chapter, string site, string date)
-        {
-            this.novel = novel;
-            this.chapter = chapter;
-            this.site = site;
-            lastDate = date;
-        }
         public string novel;  //小说名
         public string chapter;  //章节名
         public string site;  //地址，不包含域名
+        public int web;  //地址，不包含域名
         public string lastDate;  //最后阅读时间
     }
 }

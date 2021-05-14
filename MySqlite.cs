@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Generic;                                                                                                       
 using System.Data;
 using System.Data.SQLite;
 using System.Windows.Forms;
@@ -27,8 +27,13 @@ namespace BilibiliProjects
             List<Chapter> chapters = new List<Chapter>();
             while (reader.Read())
             {
-                chapters.Add(new Chapter(reader["novel"].ToString(), 
-                    reader["chapter"].ToString(), reader["site"].ToString(),reader["date"].ToString()));
+                Chapter chapter = new Chapter();
+                chapter.web = Convert.ToInt32(reader["webIndex"].ToString());
+                chapter.novel = reader["novel"].ToString();
+                chapter.chapter = reader["chapter"].ToString();
+                chapter.site = reader["site"].ToString();
+                chapter.lastDate = reader["date"].ToString();
+                chapters.Add(chapter);
             }
             reader.Close();
             return chapters;
