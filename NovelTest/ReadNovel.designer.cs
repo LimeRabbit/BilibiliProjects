@@ -1,5 +1,5 @@
 ﻿
-namespace BilibiliProjects
+namespace BilibiliProjects.NovelTest
 {
     partial class ReadNovel
     {
@@ -29,6 +29,7 @@ namespace BilibiliProjects
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button1 = new System.Windows.Forms.Button();
             this.textBox_page = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -36,11 +37,17 @@ namespace BilibiliProjects
             this.button_pre = new System.Windows.Forms.Button();
             this.button_next = new System.Windows.Forms.Button();
             this.label_book = new System.Windows.Forms.Label();
+            this.label_source = new System.Windows.Forms.Label();
+            this.button_chapters = new System.Windows.Forms.Button();
+            this.button_words = new System.Windows.Forms.Button();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.屏蔽选中词语ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(261, 15);
+            this.button1.Location = new System.Drawing.Point(273, 36);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
@@ -50,7 +57,7 @@ namespace BilibiliProjects
             // 
             // textBox_page
             // 
-            this.textBox_page.Location = new System.Drawing.Point(60, 15);
+            this.textBox_page.Location = new System.Drawing.Point(72, 36);
             this.textBox_page.Name = "textBox_page";
             this.textBox_page.Size = new System.Drawing.Size(195, 21);
             this.textBox_page.TabIndex = 4;
@@ -59,7 +66,7 @@ namespace BilibiliProjects
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 20);
+            this.label2.Location = new System.Drawing.Point(25, 41);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 12);
             this.label2.TabIndex = 3;
@@ -70,6 +77,7 @@ namespace BilibiliProjects
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox1.ContextMenuStrip = this.contextMenuStrip1;
             this.richTextBox1.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.richTextBox1.ForeColor = System.Drawing.Color.Blue;
             this.richTextBox1.Location = new System.Drawing.Point(14, 100);
@@ -81,7 +89,7 @@ namespace BilibiliProjects
             // 
             // button_pre
             // 
-            this.button_pre.Location = new System.Drawing.Point(375, 15);
+            this.button_pre.Location = new System.Drawing.Point(387, 36);
             this.button_pre.Name = "button_pre";
             this.button_pre.Size = new System.Drawing.Size(69, 23);
             this.button_pre.TabIndex = 6;
@@ -91,7 +99,7 @@ namespace BilibiliProjects
             // 
             // button_next
             // 
-            this.button_next.Location = new System.Drawing.Point(450, 15);
+            this.button_next.Location = new System.Drawing.Point(462, 36);
             this.button_next.Name = "button_next";
             this.button_next.Size = new System.Drawing.Size(69, 23);
             this.button_next.TabIndex = 7;
@@ -105,15 +113,62 @@ namespace BilibiliProjects
             this.label_book.Font = new System.Drawing.Font("宋体", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label_book.Location = new System.Drawing.Point(12, 65);
             this.label_book.Name = "label_book";
-            this.label_book.Size = new System.Drawing.Size(61, 15);
+            this.label_book.Size = new System.Drawing.Size(97, 15);
             this.label_book.TabIndex = 10;
-            this.label_book.Text = "label4";
+            this.label_book.Text = "label_book";
             // 
-            // Form1
+            // label_source
+            // 
+            this.label_source.AutoSize = true;
+            this.label_source.Location = new System.Drawing.Point(13, 20);
+            this.label_source.Name = "label_source";
+            this.label_source.Size = new System.Drawing.Size(53, 12);
+            this.label_source.TabIndex = 11;
+            this.label_source.Text = "当前来源";
+            // 
+            // button_chapters
+            // 
+            this.button_chapters.Location = new System.Drawing.Point(672, 34);
+            this.button_chapters.Name = "button_chapters";
+            this.button_chapters.Size = new System.Drawing.Size(75, 23);
+            this.button_chapters.TabIndex = 12;
+            this.button_chapters.Text = "章节列表";
+            this.button_chapters.UseVisualStyleBackColor = true;
+            this.button_chapters.Click += new System.EventHandler(this.button_chapters_Click);
+            // 
+            // button_words
+            // 
+            this.button_words.Location = new System.Drawing.Point(753, 34);
+            this.button_words.Name = "button_words";
+            this.button_words.Size = new System.Drawing.Size(75, 23);
+            this.button_words.TabIndex = 13;
+            this.button_words.Text = "屏蔽词管理";
+            this.button_words.UseVisualStyleBackColor = true;
+            this.button_words.Click += new System.EventHandler(this.button_words_Click);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.屏蔽选中词语ToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(149, 26);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            // 
+            // 屏蔽选中词语ToolStripMenuItem
+            // 
+            this.屏蔽选中词语ToolStripMenuItem.Name = "屏蔽选中词语ToolStripMenuItem";
+            this.屏蔽选中词语ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.屏蔽选中词语ToolStripMenuItem.Text = "屏蔽选中词语";
+            this.屏蔽选中词语ToolStripMenuItem.Click += new System.EventHandler(this.屏蔽选中词语ToolStripMenuItem_Click);
+            // 
+            // ReadNovel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(901, 693);
+            this.Controls.Add(this.button_words);
+            this.Controls.Add(this.button_chapters);
+            this.Controls.Add(this.label_source);
             this.Controls.Add(this.label_book);
             this.Controls.Add(this.button_next);
             this.Controls.Add(this.button_pre);
@@ -121,10 +176,11 @@ namespace BilibiliProjects
             this.Controls.Add(this.textBox_page);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button1);
-            this.Name = "Form1";
+            this.Name = "ReadNovel";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "看小说";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -139,6 +195,11 @@ namespace BilibiliProjects
         private System.Windows.Forms.Button button_pre;
         private System.Windows.Forms.Button button_next;
         private System.Windows.Forms.Label label_book;
+        private System.Windows.Forms.Label label_source;
+        private System.Windows.Forms.Button button_chapters;
+        private System.Windows.Forms.Button button_words;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem 屏蔽选中词语ToolStripMenuItem;
     }
 }
 

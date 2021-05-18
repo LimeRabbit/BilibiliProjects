@@ -3,32 +3,88 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
 
-namespace BilibiliProjects
+namespace BilibiliProjects.NovelTest
 {
     public partial class Search : Form
     {
-        List<Novel> novels;
-        List<Chapter> chapters;
+        List<Novel> novels;  //搜索页的小说列表
+        List<Chapter> chapters;  //章节列表
+        //用于网络请求，获取返回值需要判断
+        private const int SearchCode = 0;
+        private const int ChapterCode = 1;
+        Tools webTools;
+
         public Search()
         {
             InitializeComponent();
             Width = listView2.Left;
             comboBox_Source.SelectedIndex = 0;
-
             MySqlite.InitDB();
             if (!File.Exists(MySqlite.path))
             {
                 Tools.CreateTable();  //不存在数据库，创建新表
             }
+
+            webTools = new Tools();
+            //网络请求结束的事件
+            webTools.HTMLGetCompleted += Tools_HTMLGetCompleted;
+        }
+
+        private void Tools_HTMLGetCompleted(string result, string errorMsg, int requestCode)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(delegate  //跨线程操作控件，需要Invoke
+                {
+                    AnalyzeResult(result, errorMsg, requestCode);
+                }));
+            }
+            else
+            {
+                AnalyzeResult(result, errorMsg, requestCode);
+            }
+        }
+        /// <summary>
+        /// 解析返回结果
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="errorMsg"></param>
+        /// <param name="requestCode"></param>
+        void AnalyzeResult(string s, string errorMsg, int requestCode)
+        {
+            if (errorMsg != null)
+            {
+                MessageBox.Show(errorMsg);
+                label_state.Text = "";
+            }
+            else
+            {
+                switch (requestCode)
+                {
+                    case SearchCode: //搜索
+                        GetSearchResult(s);
+                        label_state.Text = "";
+                        break;
+                    case ChapterCode:  //获取章节列表
+                        GetChapterResult(s);
+                        break;
+                }
+            }
+            textBox_keyword.Enabled = true;
+            comboBox_Source.Enabled = true;
+            button_ok.Enabled = true;
+            button_mybooks.Enabled = true;
         }
 
         //按下回车键，搜索
@@ -43,31 +99,47 @@ namespace BilibiliProjects
         private void button_ok_Click(object sender, EventArgs e)
         {
             SearchNovel();
-
         }
 
+        /// <summary>
+        /// 搜索
+        /// </summary>
         private void SearchNovel()
         {
             string keyword = textBox_keyword.Text.Trim();
             if (keyword.Length == 0)
                 return;
+            label_state.Text = "搜索中……";
+            textBox_keyword.Enabled = false;
+            comboBox_Source.Enabled = false;
+            button_ok.Enabled = false;
+            button_mybooks.Enabled = false;
             listView1.Items.Clear();
             novels = new List<Novel>();
             //搜索的链接和参数
             string url = GetSearchUrl(keyword);
-            Stream stream = Tools.GetHtml(url);
-            string s = Tools.streamToString(stream, Encoding.UTF8);
+            webTools.GetHtmlByThread(url, SearchCode);
+        }
+
+        /// <summary>
+        /// 把搜索结果添加到列表
+        /// </summary>
+        /// <param name="s"></param>
+        private void GetSearchResult(string s)
+        {
+            string keyword = textBox_keyword.Text.Trim();
             List<string> names = new List<string>();
             List<string> authors = new List<string>();
             List<string> new1 = new List<string>();
             List<string> dates = new List<string>();
+            //解析
             AnalyzeSearchResult(s, ref names, ref authors, ref new1, ref dates);
             List<ListViewItem> items = new List<ListViewItem>();
             ListViewItem item;
             Novel novel;
             for (int i = 0; i < names.Count; i++)
             {
-                novel = new Novel(names[i], authors[i], new1[i], "-");
+                novel = new Novel(names[i], authors[i], new1[i], dates[i]);
                 novels.Add(novel);
                 string[] subItem = { novel.name, novel.state, novel.author,
                     novel.newChapter, novel.lastDate };
@@ -96,6 +168,7 @@ namespace BilibiliProjects
             {
                 case 0:
                 case 1:
+                case 2:
                     url= Tools.source.Site + Tools.source.SearchPage + "?" + Tools.source.SearchKeyword + "=" + HttpUtility.UrlEncode(keyword);
                     break;
             }
@@ -111,18 +184,31 @@ namespace BilibiliProjects
             {
                 case 0:
                     //所有书名
-                    names = Tools.getAllBetweenText(s, "<dt>", "</dt>");
+                    names = Tools.GetAllBetweenText(s, "<dt>", "</dt>");
                     //所有作者名
-                    authors = Tools.getAllBetweenText(s, "<p>作者：", "</p>");
+                    authors = Tools.GetAllBetweenText(s, "<p>作者：", "</p>");
                     //所有最新章
-                    new1 = Tools.getAllBetweenText(s, "<p>最新：", "</a>");
+                    new1 = Tools.GetAllBetweenText(s, "<p>最新：", "</a>");
                     //所有最近更新日期
-                    dates = Tools.getAllBetweenText(s, "<p>更新：", "</p>");
+                    dates = Tools.GetAllBetweenText(s, "<p>更新：", "</p>");
                     break;
                 case 1:
-                    names = Tools.getAllBetweenText(s, "<h4 class=\"bookname\">", "</h4>");
-                    authors = Tools.getAllBetweenText(s, ">作者：", "</div>");
-                    new1 = Tools.getAllBetweenText(s, "<span>更新至：</span>", "</div>");
+                    names = Tools.GetAllBetweenText(s, "<h4 class=\"bookname\">", "</h4>");
+                    authors = Tools.GetAllBetweenText(s, ">作者：", "</div>");
+                    new1 = Tools.GetAllBetweenText(s, "<span>更新至：</span>", "</div>");
+                    for (int i = 0; i < names.Count; i++)
+                    {
+                        dates.Add("");
+                    }
+                    break;
+                case 2:
+                    //所有书名
+                    names = Tools.GetAllBetweenText(s, "block_txt\">", "</h2>");
+                    //所有作者名
+                    authors = Tools.GetAllBetweenText(s, ">作者：", "</p>");
+                    //所有最新章
+                    new1 = Tools.GetAllBetweenText(s, "最新章节：", "</a>");
+                    //所有最近更新日期
                     for (int i = 0; i < names.Count; i++)
                     {
                         dates.Add("");
@@ -131,57 +217,109 @@ namespace BilibiliProjects
             }
         }
 
+        bool showItem = false;  //是否显示章节列表
         private void 章节列表ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GetChapter(true);
+            showItem = true;
+            GetChapter();
         }
         private void listView1_DoubleClick(object sender, EventArgs e)
         {
-            GetChapter(true);
+            showItem = true;
+            GetChapter();
         }
 
         List<ListViewItem> chapterItems;
-        void GetChapter(bool showItem)
+        string tmpNovelName = "";
+        /// <summary>
+        /// 获取章节列表
+        /// </summary>
+        void GetChapter()
         {
-            if (listView1.SelectedItems.Count == 0)
+            if (listView1.SelectedIndices.Count == 0)
                 return;
+            listView2.Items.Clear();
+            label_state.Text = "获取中……";
+            textBox_keyword.Enabled = false;
+            comboBox_Source.Enabled = false;
+            button_ok.Enabled = false;
+            button_mybooks.Enabled = false;
+            allUrls = new List<string>();
             int index = listView1.SelectedIndices[0];
+            tmpNovelName = listView1.Items[index].SubItems[0].Text;
             chapters = new List<Chapter>();
             chapterItems = new List<ListViewItem>();
             Novel novel = novels[index];
             //章节列表
             string url = GetChapterLink(novel);
-            Stream stream = Tools.GetHtml(url);
-            string s = Tools.streamToString(stream, Encoding.UTF8);
-            AnalyzeChapters(showItem, s);
+            webTools.GetHtmlByThread(url, ChapterCode);
+        }
+
+        List<string> allUrls;  //对于章节列表分页的网站，该变量储存每一页的页面链接
+        int allUrlIndex = 1;  //当期访问的 allUrls 的索引
+        private void GetChapterResult(string s)
+        {
+            AnalyzeChapters(s);
             if (showItem)
             {
                 AddChaptersList();
                 Width = listView2.Right + 30;
             }
             else if (chapters.Count > 0)  //阅读第一章
-                ReadChapter(chapters[0].site);
+                ReadChapter(chapters[0].site,chapters[0].novel);
+            if(Tools.source.ID==2) //章节列表分页，需要获取每一页
+            {
+                if (allUrlIndex < allUrls.Count)
+                {
+                    label_state.Text = "获取中："+allUrls[allUrlIndex];
+                    webTools.GetHtmlByThread(Tools.source.Site+ allUrls[allUrlIndex], ChapterCode);
+                    allUrlIndex++;
+                }
+                else  //所有页都获取了，存入数据库
+                {
+                    label_state.Text = "";
+                    Thread t = new Thread(InsertDB);
+                    t.Start();
+                }
+            }
+            else  //存数据库
+            {
+                Thread t = new Thread(InsertDB);
+                t.Start();
+            }
         }
 
-        private void AnalyzeChapters(bool showItem, string s)
+        /// <summary>
+        /// 解析章节信息
+        /// </summary>
+        /// <param name="s"></param>
+        private void AnalyzeChapters(string s)
         {
-            Regex r_site ;
-            Regex r_chapter;
+            string tmpStr;
+            Regex r_site = new Regex("");  //章节地址
+            Regex r_chapter = new Regex("");  //章节名
             switch (Tools.source.ID)
             {
-                default:
-                    r_site = new Regex("");
-                    r_chapter = new Regex("");
-                    break;
                 case 0:
-                    s = Tools.getBetweenText(s, "<ul class=\"am-list am-list-striped\">", "</ul>").Trim();
+                    s = Tools.GetBetweenText(s, "<ul class=\"am-list am-list-striped\">", "</ul>").Trim();
                     r_site = new Regex(@"/\d*/\d*/\d*\.html");
                     //以 "> 开头、以 </a 结尾，但是不要包含这两个串，只取中间部分
                     r_chapter = new Regex("(?<=\">).*(?=</a)");
                     break;
                 case 1:
-                    s = Tools.getBetweenText(s, "<ul class=\"chapter\">", "</ul>").Trim();
+                    s = Tools.GetBetweenText(s, "<ul class=\"chapter\">", "</ul>").Trim();
                     r_site = new Regex(@"/book/\d*/\d*/\d*\.html");
+                    //以 "> 开头、以 </a 结尾，但是不要包含这两个串，只取中间部分
+                    r_chapter = new Regex("(?<=\">).*(?=</a)");
+                    break;
+                case 2:
+                    if(allUrls==null||allUrls.Count==0)
+                    {
+                        tmpStr = Tools.GetBetweenText(s, "<select", "</select>"); //页数列表
+                        allUrls = Tools.GetAllBetweenText(tmpStr, "value=\"", "\"");
+                    }
+                    s= Tools.GetBetweenText(s, "<dl><dt></dt>", "</dl>").Trim();
+                    r_site = new Regex(@"/\d*/\d*\.html");
                     //以 "> 开头、以 </a 结尾，但是不要包含这两个串，只取中间部分
                     r_chapter = new Regex("(?<=\">).*(?=</a)");
                     break;
@@ -192,7 +330,7 @@ namespace BilibiliProjects
             {
                 string site = matches_site[i].Value;
                 string name = matches_chapter[i].Value;
-                chapters.Add(new Chapter(name, site));
+                chapters.Add(new Chapter(tmpNovelName,name, site));
                 if (showItem)
                     chapterItems.Add(new ListViewItem(new string[] { name, site }));
             }
@@ -213,17 +351,48 @@ namespace BilibiliProjects
                     int index = tmp.LastIndexOf("/");
                     link = Tools.source.Site + "booklist" + tmp.Substring(index)+".html";
                     break;
+                case 2:
+                    link =Tools.source.Site+ novel.indexUrl + "page-1.html";
+                    break;
             }
             return link;
         }
 
-        void ReadChapter(string address)
+        /// <summary>
+        /// 把章节列表存入数据库，以便在阅读界面调用
+        /// </summary>
+        void InsertDB()
         {
-            new ReadNovel(address).Show();
+            //删除原有的
+            string sql = "delete from chapters where webIndex=@ID and novel=@novel";
+            List<SQLiteParameter> parameters = new List<SQLiteParameter>();
+            parameters.Add(new SQLiteParameter("ID", Tools.source.ID));
+            parameters.Add(new SQLiteParameter("novel", tmpNovelName));
+            MySqlite.ExecSql(sql, parameters);
+            //插入新的
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < chapters.Count; i++)
+            {
+                sb.Append("insert into chapters values('");
+                sb.Append(tmpNovelName).Append("','");  //小说名
+                sb.Append(chapters[i].chapter).Append("',"); //章节名
+                sb.Append(Tools.source.ID).Append(",'");  //网站索引
+                sb.Append(chapters[i].site).Append("');");  //小说地址
+                if (i % 200 == 0 || i == chapters.Count - 1)
+                {
+                    MySqlite.ExecSql(sb.ToString());
+                    sb = new StringBuilder();
+                }
+            }
+        }
+
+        void ReadChapter(string address,string novelName)
+        {
+            new ReadNovel(address,novelName).Show();//阅读界面
             Hide();
         }
 
-        string chapterKeyword = "";
+        string chapterKeyword = "";  //搜索章节的关键词
         private void textBox_chapter_TextChanged(object sender, EventArgs e)
         {
             //搜索章节
@@ -234,10 +403,11 @@ namespace BilibiliProjects
             if(index>-1)
                 listView2.EnsureVisible(index);
         }
-
+        /// <summary>
+        /// 虚拟模式添加数据
+        /// </summary>
         void AddChaptersList()
         {
-            listView2.Items.Clear();
             if (chapterItems == null || chapterItems.Count == 0)
                 return;
 
@@ -261,12 +431,14 @@ namespace BilibiliProjects
             if (listView2.SelectedIndices.Count == 0)
                 return;
             int index = listView2.SelectedIndices[0];
-            ReadChapter(chapters[index].site);
+            ReadChapter(chapters[index].site,chapters[index].novel);
         }
 
         private void 开始阅读ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GetChapter(false);  //不需要显示
+
+            showItem = false;
+            GetChapter();  //不需要显示，直接阅读
         }
 
         private void button_hideChapter_Click(object sender, EventArgs e)
@@ -276,7 +448,7 @@ namespace BilibiliProjects
 
         private void button_mybooks_Click(object sender, EventArgs e)
         {
-            BookShelf book = new BookShelf(this);
+            BookShelf book = new BookShelf(this);  //书架
             book.Show();
             Hide();
         }
@@ -288,6 +460,4 @@ namespace BilibiliProjects
             SearchNovel();
         }
     }
-
-    
 }

@@ -1,5 +1,5 @@
 ﻿
-namespace BilibiliProjects
+namespace BilibiliProjects.NovelTest
 {
     partial class BookShelf
     {
@@ -34,11 +34,11 @@ namespace BilibiliProjects
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.textBox_search = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.删除记录ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textBox_search = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -72,7 +72,26 @@ namespace BilibiliProjects
             // columnHeader3
             // 
             this.columnHeader3.Text = "章节名";
-            this.columnHeader3.Width = 286;
+            this.columnHeader3.Width = 247;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "最后阅读";
+            this.columnHeader4.Width = 203;
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.删除记录ToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(125, 26);
+            // 
+            // 删除记录ToolStripMenuItem
+            // 
+            this.删除记录ToolStripMenuItem.Name = "删除记录ToolStripMenuItem";
+            this.删除记录ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.删除记录ToolStripMenuItem.Text = "删除记录";
+            this.删除记录ToolStripMenuItem.Click += new System.EventHandler(this.删除记录ToolStripMenuItem_Click);
             // 
             // textBox_search
             // 
@@ -90,25 +109,6 @@ namespace BilibiliProjects
             this.label2.Size = new System.Drawing.Size(41, 12);
             this.label2.TabIndex = 9;
             this.label2.Text = "搜索：";
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "最后阅读";
-            this.columnHeader4.Width = 109;
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.删除记录ToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(125, 26);
-            // 
-            // 删除记录ToolStripMenuItem
-            // 
-            this.删除记录ToolStripMenuItem.Name = "删除记录ToolStripMenuItem";
-            this.删除记录ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.删除记录ToolStripMenuItem.Text = "删除记录";
-            this.删除记录ToolStripMenuItem.Click += new System.EventHandler(this.删除记录ToolStripMenuItem_Click);
             // 
             // BookShelf
             // 

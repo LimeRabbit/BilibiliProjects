@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;                                                                                                          
 using System.Windows.Forms;
 
-namespace BilibiliProjects
+namespace BilibiliProjects.NovelTest
 {
     public partial class BookShelf : Form
     {
@@ -20,14 +20,25 @@ namespace BilibiliProjects
         {
             InitializeComponent();
             this.form = form;
-                GetData();  
+            GetData();
         }
 
         List<Chapter> chapters;
         void GetData()
         {
             string sql = "select * from bookshelf order by date desc";
-            chapters = MySqlite.GetData(sql);
+            DataTable table= MySqlite.GetData(sql);
+            chapters = new List<Chapter>();
+            for (int i = 0; i < table.Rows.Count; i++)
+            {
+                Chapter chapter = new Chapter();
+                chapter.novel = table.Rows[i][0].ToString();
+                chapter.chapter = table.Rows[i][1].ToString();
+                chapter.web = Convert.ToInt32(table.Rows[i][2].ToString());
+                chapter.site = table.Rows[i][3].ToString();
+                chapter.lastDate = table.Rows[i][4].ToString();
+                chapters.Add(chapter);
+            }
             AddList();
         }
 
@@ -41,10 +52,15 @@ namespace BilibiliProjects
                     chapters[i].chapter,chapters[i].lastDate };
                 ListViewItem item = new ListViewItem(ss);
                 item.UseItemStyleForSubItems = false;
-                //搜索章节，标红
+                //搜索书名，标红
                 if (keyword != "" && chapters[i].novel.IndexOf(keyword) > -1)
                 {
                     item.SubItems[1].ForeColor = Color.Red;
+                }
+                //搜索章节，标红
+                if (keyword != "" && chapters[i].chapter.IndexOf(keyword) > -1)
+                {
+                    item.SubItems[2].ForeColor = Color.Red;
                 }
                 items.Add(item);
             }
@@ -65,12 +81,12 @@ namespace BilibiliProjects
                 return;
             int index = listView1.SelectedIndices[0];
             Tools.InitSource(chapters[index].web);
-            ReadChapter(chapters[index].site);
+            ReadChapter(chapters[index].site, chapters[index].novel);
         }
-        void ReadChapter(string address)
+        void ReadChapter(string address,string novelName)
         {
-            userClose = false; //不是用户主动关闭
-            new ReadNovel(address).Show();
+            userClose = false; //不是用户主动关闭，而是点击列表之后的关闭
+            new ReadNovel(address, novelName).Show();
             Close();
         }
 
@@ -79,7 +95,6 @@ namespace BilibiliProjects
             string novel = chapters[index].novel;
             string sql = "delete from bookshelf where novel=@novel";
             List<SQLiteParameter> parameters = new List<SQLiteParameter>();
-            parameters = new List<SQLiteParameter>();
             parameters.Add(new SQLiteParameter("novel", novel));
             MySqlite.ExecSql(sql, parameters);
             GetData();
@@ -95,7 +110,7 @@ namespace BilibiliProjects
 
         private void BookShelf_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if(userClose)
+            if(userClose)  //如果用户点击右上角关闭，则回到主界面
             {
                 form.Show();
             }

@@ -19,52 +19,66 @@ namespace BilibiliProjects
         /// </summary>
         /// <param name="sql">语句</param>
         /// <returns></returns>
-        public static List<Chapter> GetData(string sql)
+        public static DataTable GetData(string sql)
+        {
+            return GetData(sql, null);
+        }
+        /// <summary>
+        /// 获取数据
+        /// </summary>
+        /// <param name="sql">语句</param>
+        /// <returns></returns>
+        public static DataTable GetData(string sql, List<SQLiteParameter> parameters)
         {
             if (con.State == ConnectionState.Closed) con.Open();
             SQLiteCommand cmd = new SQLiteCommand(sql, con);
-            SQLiteDataReader reader = cmd.ExecuteReader();
-            List<Chapter> chapters = new List<Chapter>();
-            while (reader.Read())
+            if (parameters != null && parameters.Count > 0)
+                cmd.Parameters.AddRange(parameters.ToArray());
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
+            DataTable table = new DataTable();
+            adapter.Fill(table);
+            con.Close();
+            return table;
+        }
+
+        //获得结果的第一行第一列
+        public static string GetFirstResult(string sql, List<SQLiteParameter> pars)
+        {
+            if (con.State == ConnectionState.Closed) con.Open();
+            SQLiteCommand com = new SQLiteCommand(sql, con);
+            com.Parameters.AddRange(pars.ToArray());
+            SQLiteDataReader reader = com.ExecuteReader();
+            string res = "";
+            if (reader.Read())
             {
-                Chapter chapter = new Chapter();
-                chapter.web = Convert.ToInt32(reader["webIndex"].ToString());
-                chapter.novel = reader["novel"].ToString();
-                chapter.chapter = reader["chapter"].ToString();
-                chapter.site = reader["site"].ToString();
-                chapter.lastDate = reader["date"].ToString();
-                chapters.Add(chapter);
+                res = reader[0].ToString();
             }
             reader.Close();
-            return chapters;
-        }
-
-        //执行count函数，获得结果数量
-        public static int GetCount(string sql, List<SQLiteParameter> pars)
-        {
-            if (con.State == ConnectionState.Closed) con.Open();
-            SQLiteCommand com = new SQLiteCommand(sql, con);
-            com.Parameters.AddRange(pars.ToArray());
-            int lines = Convert.ToInt32(com.ExecuteScalar());
             con.Close();
-            return lines;
+            return res;
         }
-
+        /// <summary>
+        /// 执行语句
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
         public static int ExecSql(string sql)
         {
-            if (con.State == ConnectionState.Closed) con.Open();
-            SQLiteCommand com = new SQLiteCommand(sql, con);
-            int lines=com.ExecuteNonQuery();
-            con.Close();
-            return lines;
+            return ExecSql(sql, null);
         }
 
-        public static int ExecSql(string sql,List<SQLiteParameter> pars)
+        /// <summary>
+        /// 执行语句
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="pars"></param>
+        /// <returns></returns>
+        public static int ExecSql(string sql, List<SQLiteParameter> pars)
         {
             if (con.State == ConnectionState.Closed) con.Open();
             SQLiteCommand com = new SQLiteCommand(sql, con);
-            
-            com.Parameters.AddRange(pars.ToArray());
+            if (pars != null && pars.Count > 0)
+                com.Parameters.AddRange(pars.ToArray());
             int lines = com.ExecuteNonQuery();
             con.Close();
             return lines;

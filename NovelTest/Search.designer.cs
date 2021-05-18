@@ -1,5 +1,5 @@
 ﻿
-namespace BilibiliProjects
+namespace BilibiliProjects.NovelTest
 {
     partial class Search
     {
@@ -51,6 +51,7 @@ namespace BilibiliProjects
             this.button_mybooks = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.comboBox_Source = new System.Windows.Forms.ComboBox();
+            this.label_state = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -228,18 +229,28 @@ namespace BilibiliProjects
             this.comboBox_Source.FormattingEnabled = true;
             this.comboBox_Source.Items.AddRange(new object[] {
             "31小说",
-            "悠悠书盟"});
+            "悠悠书盟",
+            "棉花糖小说"});
             this.comboBox_Source.Location = new System.Drawing.Point(80, 11);
             this.comboBox_Source.Name = "comboBox_Source";
             this.comboBox_Source.Size = new System.Drawing.Size(185, 20);
             this.comboBox_Source.TabIndex = 11;
             this.comboBox_Source.SelectedIndexChanged += new System.EventHandler(this.comboBox_Source_SelectedIndexChanged);
             // 
+            // label_state
+            // 
+            this.label_state.AutoSize = true;
+            this.label_state.Location = new System.Drawing.Point(645, 15);
+            this.label_state.Name = "label_state";
+            this.label_state.Size = new System.Drawing.Size(0, 12);
+            this.label_state.TabIndex = 12;
+            // 
             // Search
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1574, 747);
+            this.Controls.Add(this.label_state);
             this.Controls.Add(this.comboBox_Source);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button_mybooks);
@@ -283,5 +294,6 @@ namespace BilibiliProjects
         private System.Windows.Forms.Button button_mybooks;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox comboBox_Source;
+        private System.Windows.Forms.Label label_state;
     }
 }

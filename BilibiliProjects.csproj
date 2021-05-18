@@ -127,11 +127,35 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="MySqlite.cs" />
+    <Compile Include="NovelTest\AddBlackWord.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NovelTest\AddBlackWord.Designer.cs">
+      <DependentUpon>AddBlackWord.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NovelTest\BlackWords.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NovelTest\BlackWords.Designer.cs">
+      <DependentUpon>BlackWords.cs</DependentUpon>
+    </Compile>
     <Compile Include="NovelTest\BookShelf.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="NovelTest\BookShelf.designer.cs">
       <DependentUpon>BookShelf.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NovelTest\ChaptersList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NovelTest\ChaptersList.Designer.cs">
+      <DependentUpon>ChaptersList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NovelTest\ModifyBlackWords.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NovelTest\ModifyBlackWords.Designer.cs">
+      <DependentUpon>ModifyBlackWords.cs</DependentUpon>
     </Compile>
     <Compile Include="NovelTest\ReadNovel.cs">
       <SubType>Form</SubType>
@@ -181,8 +205,20 @@
     <EmbeddedResource Include="MyLabelTest.resx">
       <DependentUpon>MyLabelTest.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="NovelTest\AddBlackWord.resx">
+      <DependentUpon>AddBlackWord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NovelTest\BlackWords.resx">
+      <DependentUpon>BlackWords.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="NovelTest\BookShelf.resx">
       <DependentUpon>BookShelf.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NovelTest\ChaptersList.resx">
+      <DependentUpon>ChaptersList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NovelTest\ModifyBlackWords.resx">
+      <DependentUpon>ModifyBlackWords.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NovelTest\ReadNovel.resx">
       <DependentUpon>ReadNovel.cs</DependentUpon>
