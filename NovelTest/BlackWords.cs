@@ -58,7 +58,7 @@ namespace BilibiliProjects.NovelTest
 
         private void button_del_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("确定删除吗？");
+            DialogResult dr = MessageBox.Show("确定删除吗？", "提示", MessageBoxButtons.OKCancel);
             if(dr==DialogResult.OK)
             {
                 string word = listView1.SelectedItems[0].SubItems[0].Text;
@@ -83,7 +83,7 @@ namespace BilibiliProjects.NovelTest
 
         private void button_clr_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("将会清空所有要屏蔽的词语，确认吗？");
+            DialogResult dr = MessageBox.Show("将会清空所有要屏蔽的词语，确认吗？","提示",MessageBoxButtons.OKCancel);
             if(dr==DialogResult.OK)
             {
                 string sql = "delete from blackWords";

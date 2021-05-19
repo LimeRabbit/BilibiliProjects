@@ -43,6 +43,16 @@ namespace BilibiliProjects
                     source.SearchPage = "search.php";
                     source.SearchKeyword = "submit=&searchkey";
                     break;
+                case 3:   //天域
+                    source.Site = "http://www.tycqxs.com/";
+                    source.SearchPage = "search.php";
+                    source.SearchKeyword = "searchkey";
+                    break;
+                case 4:  //56书库
+                    source.Site = "http://www.liuxs.la/";
+                    source.SearchPage = "search.php";
+                    source.SearchKeyword = "searchkey";
+                    break;
             }
         }
         /// <summary>
@@ -149,7 +159,7 @@ namespace BilibiliProjects
         }
 
         //定义委托方法
-        public delegate void HTMLGet(string result, string errorMsg, int requestCode);
+        public delegate void HTMLGet(WebResponseInfo responseInfo, int requestCode);
         //定义事件，触发该事件时，会执行上面的委托方法
         public event HTMLGet HTMLGetCompleted;
         /// <summary>
@@ -179,45 +189,85 @@ namespace BilibiliProjects
             if (!url.StartsWith("http")) url = "http://" + url;
             //创建 HttpWebRequest 对象
             myRequest = (HttpWebRequest)WebRequest.Create(url);
+            WebResponseInfo webResponseInfo = new WebResponseInfo();
+            webResponseInfo.URL = url;
             try
             {
                 //取得response
                 HttpWebResponse myResponse = (HttpWebResponse)myRequest.GetResponse();
+                webResponseInfo.ResponseCode = myResponse.StatusCode;
+                webResponseInfo.ResponseHeader = myResponse.Headers;
                 //取网页流
                 Stream stream = myResponse.GetResponseStream();
-                if(myResponse.ContentEncoding.ToLower().Contains("gzip")) //解压缩gzip
+                //返回数据的类型
+                string rType = myResponse.Headers["Content-Type"];
+                if (rType.Contains("text"))  //返回的是文本
                 {
-                    using (GZipStream gstream = new GZipStream(stream, CompressionMode.Decompress))
+                    string encode = myResponse.ContentEncoding.ToLower();//返回文本格式
+                    if (encode.Contains("gzip")) //解压缩gzip
                     {
-                        using (StreamReader reader = new StreamReader(gstream))
+                        using (GZipStream gstream = new GZipStream(stream, CompressionMode.Decompress))
+                        {
+                            using (StreamReader reader = new StreamReader(gstream))
+                            {
+                                responseText = reader.ReadToEnd();
+                            }
+                        }
+                    }
+                    else if (encode.Contains("deflate")) //解压缩deflate，该压缩方式已过时
+                    {
+                        using (DeflateStream dstream = new DeflateStream(stream, CompressionMode.Decompress))
+                        {
+                            using (StreamReader reader = new StreamReader(dstream, Encoding.UTF8))
+                            {
+                                responseText = reader.ReadToEnd();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //string encoding = myResponse.CharacterSet; //返回内容的字符集编码
+                        using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
                         {
                             responseText = reader.ReadToEnd();
                         }
                     }
+                    webResponseInfo.DataType = "text";
+                    webResponseInfo.ResponseText = responseText;
                 }
-                else if(myResponse.ContentEncoding.ToLower().Contains("deflate")) //解压缩deflate，该压缩方式已过时
+                else if(rType.Contains("image"))  //如果返回的是图像
                 {
-                    using (DeflateStream dstream = new DeflateStream(stream, CompressionMode.Decompress))
+                    Image img = Image.FromStream(stream);
+                    webResponseInfo.ResponseImage = img;
+                    webResponseInfo.DataType = "image";
+                    //图形格式
+                    string type = rType.Substring(6);
+                    switch(type.ToLower())
                     {
-                        using (StreamReader reader = new StreamReader(dstream, Encoding.UTF8))
-                        {
-                            responseText = reader.ReadToEnd();
-                        }
+                        case "png":
+                            webResponseInfo.ResponseImageType = ImageFormat.Png;
+                            break;
+                        case "jpg":
+                        case "jpeg":
+                            webResponseInfo.ResponseImageType = ImageFormat.Jpeg;
+                            break;
+                        case "gif":
+                            webResponseInfo.ResponseImageType = ImageFormat.Gif;
+                            break;
+                        case "bmp":
+                            webResponseInfo.ResponseImageType = ImageFormat.Bmp;
+                            break;
+                        case "x-icon":
+                            webResponseInfo.ResponseImageType = ImageFormat.Icon;
+                            break;
                     }
                 }
-                else
-                {
-                    //string encoding = myResponse.CharacterSet; //返回内容的字符集编码
-                    using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-                    {
-                        responseText = reader.ReadToEnd();
-                    }
-                }
-                HTMLGetCompleted(responseText, null, requestCode);
+                HTMLGetCompleted(webResponseInfo, requestCode);
             }
             catch (Exception ex)
             {
-                HTMLGetCompleted(null, ex.Message, requestCode);
+                webResponseInfo.ErrorMessage = ex.ToString();
+                HTMLGetCompleted(webResponseInfo, requestCode);
             }
         }
 
@@ -261,6 +311,46 @@ namespace BilibiliProjects
     }
 
     /// <summary>
+    /// 网络访问的返回信息，包含协议头、重定向地址、状态码、cookie等等
+    /// </summary>
+    public class WebResponseInfo
+    {
+        public WebResponseInfo() { }
+        /// <summary>
+        /// 当前访问的链接
+        /// </summary>
+        public string URL;
+        /// <summary>
+        /// 返回数据类型 text image
+        /// </summary>
+        public string DataType;
+        /// <summary>
+        /// 状态码
+        /// </summary>
+        public HttpStatusCode ResponseCode;
+        /// <summary>
+        /// 返回协议头，包含cookie、重定向链接、数据类型等
+        /// </summary>
+        public WebHeaderCollection ResponseHeader;
+        /// <summary>
+        /// 网络访问错误时的信息
+        /// </summary>
+        public string ErrorMessage;
+        /// <summary>
+        /// 返回文本（仅DataType="text"时有效）
+        /// </summary>
+        public string ResponseText;
+        /// <summary>
+        /// 返回的图像（仅DataType="image"时有效）
+        /// </summary>
+        public Image ResponseImage;
+        /// <summary>
+        /// 返回的图像格式（仅DataType="image"时有效）
+        /// </summary>
+        public ImageFormat ResponseImageType;
+    }
+
+    /// <summary>
     /// 小说来源
     /// </summary>
     public class NovelSource
@@ -274,25 +364,29 @@ namespace BilibiliProjects
     /// <summary>
     /// 小说类
     /// </summary>
-    class Novel
+    public class Novel
     {
         public Novel(string name, string author, string new1, string date)
         {
             this.author = Tools.RemoveHtmlTag(author);
             lastDate = date;
             indexUrl = Tools.GetBetweenText(name, "href=\"", "\"");
-            if (name.IndexOf("完本") > -1 || name.IndexOf("连载") > -1)
+            if (name.IndexOf("完本") > -1 || name.IndexOf("连载") > -1 || name.IndexOf("完结") > -1)
             {
                 state = Tools.GetBetweenText(name, "[", "]");
+                int index = name.LastIndexOf("]");
+                if (index >= 1)
+                    name = name.Substring(index + 1).Trim();
                 //去掉“完本”“连载”
-                this.name = Tools.RemoveHtmlTag(name).Substring(state.Length + 2);
+                this.name = Tools.RemoveHtmlTag(name);
             }
             else
             {
                 state = "";
                 this.name = Tools.RemoveHtmlTag(name);
             }
-            newUrl = Tools.GetBetweenText(new1, "href=\"", "\"");
+            if(new1.Contains("href="))
+                newUrl = Tools.GetBetweenText(new1, "href=\"", "\"");
             newChapter = Tools.RemoveHtmlTag(new1);
         }
         public string name;  //书名

@@ -230,7 +230,9 @@ namespace BilibiliProjects.NovelTest
             this.comboBox_Source.Items.AddRange(new object[] {
             "31小说",
             "悠悠书盟",
-            "棉花糖小说"});
+            "棉花糖小说",
+            "天域小说",
+            "56书库"});
             this.comboBox_Source.Location = new System.Drawing.Point(80, 11);
             this.comboBox_Source.Name = "comboBox_Source";
             this.comboBox_Source.Size = new System.Drawing.Size(185, 20);

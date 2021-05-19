@@ -31,9 +31,13 @@ namespace BilibiliProjects.NovelTest
         {
             InitializeComponent();
             this.novelName = novelName;
-            site = Tools.source.Site;
-            label_source.Text = "当前来源："+site;
             textBox_page.Text = address;
+            Init();
+        }
+        void Init()
+        {
+            site = Tools.source.Site;
+            label_source.Text = "当前来源：" + site;
             tools = new Tools();
             tools.HTMLGetCompleted += Tools_HTMLGetCompleted;
             GetBlackWords();
@@ -60,18 +64,18 @@ namespace BilibiliProjects.NovelTest
             }
         }
 
-        private void Tools_HTMLGetCompleted(string result, string errorMsg, int requestCode)
+        private void Tools_HTMLGetCompleted(WebResponseInfo responseInfo, int requestCode)
         {
             if (InvokeRequired)
             {
                 BeginInvoke(new Action(delegate  //跨线程操作控件，需要Invoke
                 {
-                    AnalyzeResult(result, errorMsg, requestCode);
+                    AnalyzeResult(responseInfo.ResponseText, responseInfo.ErrorMessage, requestCode);
                 }));
             }
             else
             {
-                AnalyzeResult(result, errorMsg, requestCode);
+                AnalyzeResult(responseInfo.ResponseText, responseInfo.ErrorMessage, requestCode);
             }
         }
         /// <summary>
@@ -216,14 +220,15 @@ namespace BilibiliProjects.NovelTest
 
         string GetContentPage(string page)
         {
-            string url = "";  //章节页面的地址
+            string url;  //章节页面的地址
             switch(Tools.source.ID)
             {
-                case 0:
-                case 1:
-                case 2:
+                default:
                     url = site.TrimEnd('/') + page;
                     break;
+                //case 4:
+                //    url = site.TrimEnd('/') + "/files/article/html/" + page;
+                //    break;
             }
             return url;
         }
@@ -236,6 +241,7 @@ namespace BilibiliProjects.NovelTest
         {
             string tmp;
             List<string> tmp1;
+            int tmpInt;
             //章节名，上一页，下一页
             switch (Tools.source.ID)
             {
@@ -282,13 +288,44 @@ namespace BilibiliProjects.NovelTest
                     index_page = Tools.GetBetweenText(s, "pt_mulu\" href=\"", "\"");
                     s = Tools.GetBetweenText(s, "<div id=\"nr1\">", "</div>"); //取主体
                     s = Tools.GetBetweenText(s, "</p>", "<p>");  //去掉“最新网址”之类的废话(如果有)
-                    int index = s.IndexOf("（本章未完，");  //内容分页，把提示信息去掉
-                    if (index > -1)
-                        s = s.Substring(0, index);
+                    tmpInt = s.IndexOf("（本章未完，");  //内容分页，把提示信息去掉
+                    if (tmpInt > -1)
+                        s = s.Substring(0, tmpInt);
                     s = Regex.Replace(s, "((\\s)|(&nbsp;))+", ""); //去除空白
                     //去掉网站的广告
                     s = Regex.Replace(s, "([\\(\\[（].*mhtxs.*[\\)\\]）])|(<strong>.*mhtxs.*</strong>)", "");  
                     s = Regex.Replace(s, "(<br\\s*/>)+", Environment.NewLine + "\t");//去掉网站的换行
+                    break;
+                case 3:
+                    readtitle = Tools.GetBetweenText(s, "<h1>", "</h1>").Trim();
+                    s = Regex.Replace(s, "\\s*", "");
+                    preview_page = Tools.GetBetweenText(s, "preview_page=\"", "\"");
+                    next_page = Tools.GetBetweenText(s, "next_page=\"", "\"");
+                    index_page = Tools.GetBetweenText(s, "index_page=\"", "\"");
+                    //取正文
+                    s = Tools.GetBetweenText(s, "<divid=\"content\">", "<div");
+                    s = Regex.Replace(s, "((\\s)|(&nbsp;))+", ""); //去除空白
+                    s = Regex.Replace(s, "(<br\\s*/>)+", Environment.NewLine + "\t");
+                    tmpInt = s.IndexOf("(未完待续。");
+                    if (tmpInt > -1)
+                        s = s.Substring(0, tmpInt);
+                    break;
+                case 4:
+                    readtitle = Tools.GetBetweenText(s.ToLower(), "<h1>", "</h1>").Trim();
+                    //上一章
+                    tmp = Tools.GetBetweenText(s, "<div id=\"thumb\">", "</div>");
+                    tmp1 = Tools.GetAllBetweenText(tmp, "\"", "\"");
+                    preview_page = tmp1[0].TrimStart('.');
+                    next_page = tmp1[2].TrimStart('.');
+                    index_page = tmp1[1];
+                    s = Regex.Replace(s, "\\s*", "");
+                    //取正文
+                    s = Tools.GetBetweenText(s.ToLower(), "<p>", "</p>");
+                    s = Regex.Replace(s, "((\\s)|(&nbsp;))+", ""); //去除空白
+                    s = Regex.Replace(s, "(<br\\s*/>)+", Environment.NewLine + "\t");
+                    tmpInt = s.IndexOf("(本章完)");
+                    if (tmpInt > -1)
+                        s = s.Substring(0, tmpInt);
                     break;
             }
 

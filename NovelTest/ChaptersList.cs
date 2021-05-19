@@ -89,6 +89,10 @@ namespace BilibiliProjects.NovelTest
             {
                 e.Item.SubItems[0].ForeColor = Color.Red;
             }
+            else
+            {
+                e.Item.SubItems[0].ForeColor = Color.Black;
+            }
         }
 
         private void listView2_DoubleClick(object sender, EventArgs e)

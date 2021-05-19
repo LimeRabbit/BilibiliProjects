@@ -41,18 +41,18 @@ namespace BilibiliProjects.NovelTest
             webTools.HTMLGetCompleted += Tools_HTMLGetCompleted;
         }
 
-        private void Tools_HTMLGetCompleted(string result, string errorMsg, int requestCode)
+        private void Tools_HTMLGetCompleted(WebResponseInfo responseInfo, int requestCode)
         {
             if (InvokeRequired)
             {
                 BeginInvoke(new Action(delegate  //跨线程操作控件，需要Invoke
                 {
-                    AnalyzeResult(result, errorMsg, requestCode);
+                    AnalyzeResult(responseInfo, requestCode);
                 }));
             }
             else
             {
-                AnalyzeResult(result, errorMsg, requestCode);
+                AnalyzeResult(responseInfo, requestCode);
             }
         }
         /// <summary>
@@ -61,15 +61,17 @@ namespace BilibiliProjects.NovelTest
         /// <param name="s"></param>
         /// <param name="errorMsg"></param>
         /// <param name="requestCode"></param>
-        void AnalyzeResult(string s, string errorMsg, int requestCode)
+        void AnalyzeResult(WebResponseInfo responseInfo, int requestCode)
         {
-            if (errorMsg != null)
+            if (responseInfo.ErrorMessage != null)
             {
-                MessageBox.Show(errorMsg);
+                MessageBox.Show(responseInfo.ErrorMessage);
                 label_state.Text = "";
             }
             else
             {
+                string s = responseInfo.ResponseText;
+                string url = responseInfo.URL;
                 switch (requestCode)
                 {
                     case SearchCode: //搜索
@@ -77,7 +79,7 @@ namespace BilibiliProjects.NovelTest
                         label_state.Text = "";
                         break;
                     case ChapterCode:  //获取章节列表
-                        GetChapterResult(s);
+                        GetChapterResult(s, url);
                         break;
                 }
             }
@@ -163,13 +165,14 @@ namespace BilibiliProjects.NovelTest
         /// </summary>
         string GetSearchUrl(string keyword)
         {
-            string url = "";
+            string url;
             switch (Tools.source.ID)
             {
-                case 0:
-                case 1:
-                case 2:
-                    url= Tools.source.Site + Tools.source.SearchPage + "?" + Tools.source.SearchKeyword + "=" + HttpUtility.UrlEncode(keyword);
+                default:
+                    url = Tools.source.Site + Tools.source.SearchPage + "?" + Tools.source.SearchKeyword + "=" + HttpUtility.UrlEncode(keyword);
+                    break;
+                case 4:
+                    url= Tools.source.Site + "modules/article/" + Tools.source.SearchPage + "?" + Tools.source.SearchKeyword + "=" + HttpUtility.UrlEncode(keyword);
                     break;
             }
             return url;
@@ -180,6 +183,8 @@ namespace BilibiliProjects.NovelTest
         /// </summary>
         void AnalyzeSearchResult(string s, ref List<string> names, ref List<string> authors, ref List<string> new1, ref List<string> dates)
         {
+            List<string> tmpList;
+            string tmpStr;
             switch (Tools.source.ID)
             {
                 case 0:
@@ -188,7 +193,7 @@ namespace BilibiliProjects.NovelTest
                     //所有作者名
                     authors = Tools.GetAllBetweenText(s, "<p>作者：", "</p>");
                     //所有最新章
-                    new1 = Tools.GetAllBetweenText(s, "<p>最新：", "</a>");
+                    new1 = Tools.GetAllBetweenText(s, "<p>最新：", "</p>");
                     //所有最近更新日期
                     dates = Tools.GetAllBetweenText(s, "<p>更新：", "</p>");
                     break;
@@ -212,6 +217,29 @@ namespace BilibiliProjects.NovelTest
                     for (int i = 0; i < names.Count; i++)
                     {
                         dates.Add("");
+                    }
+                    break;
+                case 3:
+                    //所有最新章
+                    new1 = Tools.GetAllBetweenText(s, "<td class=\"odd\">", "</a>");
+                    dates= Tools.GetAllBetweenText(s, "<td class=\"odd\" align=\"center\">", "</td>");
+                    tmpList = Tools.GetAllBetweenText(s, "<td class=\"even\">", "</td>");
+                    for (int i = 0; i < tmpList.Count; i+=2)
+                    {
+                        names.Add(tmpList[i]);
+                        authors.Add(tmpList[i + 1]);
+                    }
+                    break;
+                case 4:
+                    s = Tools.GetBetweenText(s, ">更新日期</span></li>", "</DIV");
+                    //所有书名
+                    names = Tools.GetAllBetweenText(s, "<span class=\"l2\">", "</span>");
+                    dates = Tools.GetAllBetweenText(s, "<span class=\"l7\">", "更</span>");
+                    tmpList= Tools.GetAllBetweenText(s, "<span class=\"l8\">", "</span>");
+                    for (int i = 0; i < tmpList.Count; i+=2)
+                    {
+                        new1.Add(tmpList[i].Trim());
+                        authors.Add(tmpList[i + 1].Trim());
                     }
                     break;
             }
@@ -257,16 +285,16 @@ namespace BilibiliProjects.NovelTest
 
         List<string> allUrls;  //对于章节列表分页的网站，该变量储存每一页的页面链接
         int allUrlIndex = 1;  //当期访问的 allUrls 的索引
-        private void GetChapterResult(string s)
+        private void GetChapterResult(string s,string url)
         {
-            AnalyzeChapters(s);
+            AnalyzeChapters(s,url);
             if (showItem)
             {
                 AddChaptersList();
                 Width = listView2.Right + 30;
             }
             else if (chapters.Count > 0)  //阅读第一章
-                ReadChapter(chapters[0].site,chapters[0].novel);
+                ReadChapter(chapters[0].site, chapters[0].novel);
             if(Tools.source.ID==2) //章节列表分页，需要获取每一页
             {
                 if (allUrlIndex < allUrls.Count)
@@ -277,6 +305,8 @@ namespace BilibiliProjects.NovelTest
                 }
                 else  //所有页都获取了，存入数据库
                 {
+                    allUrls.Clear();
+                    allUrlIndex = 1;
                     label_state.Text = "";
                     Thread t = new Thread(InsertDB);
                     t.Start();
@@ -293,7 +323,7 @@ namespace BilibiliProjects.NovelTest
         /// 解析章节信息
         /// </summary>
         /// <param name="s"></param>
-        private void AnalyzeChapters(string s)
+        private void AnalyzeChapters(string s,string url)
         {
             string tmpStr;
             Regex r_site = new Regex("");  //章节地址
@@ -323,12 +353,26 @@ namespace BilibiliProjects.NovelTest
                     //以 "> 开头、以 </a 结尾，但是不要包含这两个串，只取中间部分
                     r_chapter = new Regex("(?<=\">).*(?=</a)");
                     break;
+                case 3:
+                    s = Tools.GetBetweenText(s, "正文</dt>", "</dl>");
+                    r_site= new Regex(@"/\d*_\d*/\d*\.html");
+                    r_chapter = new Regex("(?<='\\s>).*(?=</a)");
+                    break;
+                case 4:
+                    s = Tools.GetBetweenText(s, "<DIV class=dccss>", "</TABLE>");
+                    r_site = new Regex(@"\d*\.html");
+                    r_chapter = new Regex("(?<=\">).*(?=</a)");
+                    break;
             }
             MatchCollection matches_site = r_site.Matches(s);
             MatchCollection matches_chapter = r_chapter.Matches(s);
             for (int i = 0; i < matches_site.Count; i++)
             {
                 string site = matches_site[i].Value;
+                if(Tools.source.ID==4)
+                {
+                    site = url.Replace(Tools.source.Site,"") + site;
+                }
                 string name = matches_chapter[i].Value;
                 chapters.Add(new Chapter(tmpNovelName,name, site));
                 if (showItem)
@@ -353,6 +397,12 @@ namespace BilibiliProjects.NovelTest
                     break;
                 case 2:
                     link =Tools.source.Site+ novel.indexUrl + "page-1.html";
+                    break;
+                case 3:
+                    link = novel.indexUrl;
+                    break;
+                case 4:
+                    link = Tools.source.Site + novel.indexUrl;
                     break;
             }
             return link;
@@ -386,9 +436,9 @@ namespace BilibiliProjects.NovelTest
             }
         }
 
-        void ReadChapter(string address,string novelName)
+        void ReadChapter(string address,string novel)
         {
-            new ReadNovel(address,novelName).Show();//阅读界面
+            new ReadNovel(address,novel).Show();//阅读界面
             Hide();
         }
 
@@ -431,7 +481,7 @@ namespace BilibiliProjects.NovelTest
             if (listView2.SelectedIndices.Count == 0)
                 return;
             int index = listView2.SelectedIndices[0];
-            ReadChapter(chapters[index].site,chapters[index].novel);
+            ReadChapter(chapters[index].site, chapters[index].novel);
         }
 
         private void 开始阅读ToolStripMenuItem_Click(object sender, EventArgs e)
