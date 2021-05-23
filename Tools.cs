@@ -22,38 +22,41 @@ namespace BilibiliProjects
         /// 初始化NovelSource，公共变量
         /// </summary>
         /// <param name="index">首页下拉框索引</param>
-        public static void InitSource(int index)
+        public static string InitSource(int index, bool instead = true)
         {
-            source = new NovelSource();
-            source.ID = index;
+            NovelSource source1 = new NovelSource();
+            source1.ID = index;
             switch (index)
             {
                 case 0:  //31小说网
-                    source.Site = "http://m.31xs.com/";
-                    source.SearchPage = "search.php";
-                    source.SearchKeyword = "keyword";
+                    source1.Site = "http://m.31xs.com/";
+                    source1.SearchPage = "search.php";
+                    source1.SearchKeyword = "keyword";
                     break;
                 case 1:  //悠悠书盟
-                    source.Site = "https://m.uutxt.com/";
-                    source.SearchPage = "SearchBook.php";
-                    source.SearchKeyword = "submit=&keyword";
+                    source1.Site = "https://m.uutxt.com/";
+                    source1.SearchPage = "SearchBook.php";
+                    source1.SearchKeyword = "submit=&keyword";
                     break;
                 case 2:   //棉花糖小说
-                    source.Site = "http://m.mhtxs.la/";
-                    source.SearchPage = "search.php";
-                    source.SearchKeyword = "submit=&searchkey";
+                    source1.Site = "http://m.mhtxs.la/";
+                    source1.SearchPage = "search.php";
+                    source1.SearchKeyword = "submit=&searchkey";
                     break;
                 case 3:   //天域
-                    source.Site = "http://www.tycqxs.com/";
-                    source.SearchPage = "search.php";
-                    source.SearchKeyword = "searchkey";
+                    source1.Site = "http://www.tycqxs.com/";
+                    source1.SearchPage = "search.php";
+                    source1.SearchKeyword = "searchkey";
                     break;
                 case 4:  //56书库
-                    source.Site = "http://www.liuxs.la/";
-                    source.SearchPage = "search.php";
-                    source.SearchKeyword = "searchkey";
+                    source1.Site = "http://www.liuxs.la/";
+                    source1.SearchPage = "search.php";
+                    source1.SearchKeyword = "searchkey";
                     break;
             }
+            if (instead)
+                source = source1;
+            return source1.Site;
         }
         /// <summary>
         /// 保存图片

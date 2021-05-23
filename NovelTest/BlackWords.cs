@@ -69,6 +69,7 @@ namespace BilibiliProjects.NovelTest
                 parameters.Add(new SQLiteParameter("word", word));
                 parameters.Add(new SQLiteParameter("date", date));
                 MySqlite.ExecSql(sql, parameters);
+                listView1_SelectedIndexChanged(null, null);
                 GetData();
             }
         }

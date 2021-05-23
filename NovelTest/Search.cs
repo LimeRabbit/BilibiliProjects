@@ -307,13 +307,14 @@ namespace BilibiliProjects.NovelTest
                 {
                     allUrls.Clear();
                     allUrlIndex = 1;
-                    label_state.Text = "";
+                    label_state.Text = "保存章节……";
                     Thread t = new Thread(InsertDB);
                     t.Start();
                 }
             }
             else  //存数据库
             {
+                label_state.Text = "保存章节……";
                 Thread t = new Thread(InsertDB);
                 t.Start();
             }
@@ -413,27 +414,39 @@ namespace BilibiliProjects.NovelTest
         /// </summary>
         void InsertDB()
         {
-            //删除原有的
-            string sql = "delete from chapters where webIndex=@ID and novel=@novel";
+            string sql = "select count(*) from chapters where webIndex=@ID and novel=@novel";
             List<SQLiteParameter> parameters = new List<SQLiteParameter>();
             parameters.Add(new SQLiteParameter("ID", Tools.source.ID));
             parameters.Add(new SQLiteParameter("novel", tmpNovelName));
-            MySqlite.ExecSql(sql, parameters);
-            //插入新的
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < chapters.Count; i++)
+            int count = Convert.ToInt32(MySqlite.GetFirstResult(sql, parameters));
+            if (count != chapters.Count)  //章节数不一样，再更新数据库
             {
-                sb.Append("insert into chapters values('");
-                sb.Append(tmpNovelName).Append("','");  //小说名
-                sb.Append(chapters[i].chapter).Append("',"); //章节名
-                sb.Append(Tools.source.ID).Append(",'");  //网站索引
-                sb.Append(chapters[i].site).Append("');");  //小说地址
-                if (i % 200 == 0 || i == chapters.Count - 1)
+                //删除原有的
+                sql = "delete from chapters where webIndex=@ID and novel=@novel";
+                parameters = new List<SQLiteParameter>();
+                parameters.Add(new SQLiteParameter("ID", Tools.source.ID));
+                parameters.Add(new SQLiteParameter("novel", tmpNovelName));
+                MySqlite.ExecSql(sql, parameters);
+                //插入新的
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < chapters.Count; i++)
                 {
-                    MySqlite.ExecSql(sb.ToString());
-                    sb = new StringBuilder();
+                    sb.Append("insert into chapters values('");
+                    sb.Append(tmpNovelName).Append("','");  //小说名
+                    sb.Append(chapters[i].chapter).Append("',"); //章节名
+                    sb.Append(Tools.source.ID).Append(",'");  //网站索引
+                    sb.Append(chapters[i].site).Append("');");  //小说地址
+                    if (i % 200 == 0 || i == chapters.Count - 1)
+                    {
+                        MySqlite.ExecSql(sb.ToString());
+                        sb = new StringBuilder();
+                    }
                 }
             }
+            Invoke(new Action(delegate
+            {
+                label_state.Text = "";
+            }));
         }
 
         void ReadChapter(string address,string novel)
@@ -508,6 +521,11 @@ namespace BilibiliProjects.NovelTest
             int index = comboBox_Source.SelectedIndex;
             Tools.InitSource(index);
             SearchNovel();
+        }
+
+        private void button_chapter_Click(object sender, EventArgs e)
+        {
+            new ChaptersList("全部小说", true).ShowDialog();
         }
     }
 }

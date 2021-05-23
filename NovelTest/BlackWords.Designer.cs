@@ -72,44 +72,64 @@ namespace BilibiliProjects.NovelTest
             // 
             // button_add
             // 
+            this.button_add.BackColor = System.Drawing.Color.Green;
+            this.button_add.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button_add.FlatAppearance.BorderSize = 0;
+            this.button_add.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_add.ForeColor = System.Drawing.Color.White;
             this.button_add.Location = new System.Drawing.Point(497, 31);
             this.button_add.Name = "button_add";
             this.button_add.Size = new System.Drawing.Size(91, 23);
             this.button_add.TabIndex = 1;
             this.button_add.Text = "添加屏蔽词";
-            this.button_add.UseVisualStyleBackColor = true;
+            this.button_add.UseVisualStyleBackColor = false;
             this.button_add.Click += new System.EventHandler(this.button_add_Click);
             // 
             // button_del
             // 
+            this.button_del.BackColor = System.Drawing.Color.Maroon;
+            this.button_del.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button_del.Enabled = false;
-            this.button_del.Location = new System.Drawing.Point(497, 76);
+            this.button_del.FlatAppearance.BorderSize = 0;
+            this.button_del.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_del.ForeColor = System.Drawing.Color.White;
+            this.button_del.Location = new System.Drawing.Point(497, 89);
             this.button_del.Name = "button_del";
             this.button_del.Size = new System.Drawing.Size(91, 23);
             this.button_del.TabIndex = 2;
             this.button_del.Text = "删除选中";
-            this.button_del.UseVisualStyleBackColor = true;
+            this.button_del.UseVisualStyleBackColor = false;
             this.button_del.Click += new System.EventHandler(this.button_del_Click);
             // 
             // button_upd
             // 
+            this.button_upd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.button_upd.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button_upd.Enabled = false;
-            this.button_upd.Location = new System.Drawing.Point(497, 124);
+            this.button_upd.FlatAppearance.BorderSize = 0;
+            this.button_upd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_upd.ForeColor = System.Drawing.Color.White;
+            this.button_upd.Location = new System.Drawing.Point(497, 60);
             this.button_upd.Name = "button_upd";
             this.button_upd.Size = new System.Drawing.Size(91, 23);
             this.button_upd.TabIndex = 3;
             this.button_upd.Text = "修改选中词";
-            this.button_upd.UseVisualStyleBackColor = true;
+            this.button_upd.UseVisualStyleBackColor = false;
             this.button_upd.Click += new System.EventHandler(this.button_upd_Click);
             // 
             // button_clr
             // 
-            this.button_clr.Location = new System.Drawing.Point(497, 260);
+            this.button_clr.BackColor = System.Drawing.Color.Maroon;
+            this.button_clr.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button_clr.FlatAppearance.BorderSize = 0;
+            this.button_clr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_clr.ForeColor = System.Drawing.Color.White;
+            this.button_clr.Location = new System.Drawing.Point(497, 218);
             this.button_clr.Name = "button_clr";
             this.button_clr.Size = new System.Drawing.Size(91, 23);
             this.button_clr.TabIndex = 4;
             this.button_clr.Text = "清空所有词语";
-            this.button_clr.UseVisualStyleBackColor = true;
+            this.button_clr.UseVisualStyleBackColor = false;
             this.button_clr.Click += new System.EventHandler(this.button_clr_Click);
             // 
             // BlackWords

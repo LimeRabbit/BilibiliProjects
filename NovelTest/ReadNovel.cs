@@ -21,6 +21,7 @@ namespace BilibiliProjects.NovelTest
     {
         Tools tools;
         string site = "m.31xs.com/";  //网站
+        string url="";
         string preview_page, next_page, index_page; //上一页，下一页，索引页(目录页)
         string novelName, readtitle;  //书名，章节名
         private const int GetContentCode = 0;
@@ -66,6 +67,7 @@ namespace BilibiliProjects.NovelTest
 
         private void Tools_HTMLGetCompleted(WebResponseInfo responseInfo, int requestCode)
         {
+            url = responseInfo.URL;
             if (InvokeRequired)
             {
                 BeginInvoke(new Action(delegate  //跨线程操作控件，需要Invoke
@@ -176,7 +178,7 @@ namespace BilibiliProjects.NovelTest
 
         private void button_chapters_Click(object sender, EventArgs e)
         {
-            new ChaptersList(novelName).ShowDialog();
+            new ChaptersList(novelName,false).ShowDialog();
         }
         //从章节列表过来，需要传地址。跳章功能
         public void setSite(string site)
@@ -226,9 +228,9 @@ namespace BilibiliProjects.NovelTest
                 default:
                     url = site.TrimEnd('/') + page;
                     break;
-                //case 4:
-                //    url = site.TrimEnd('/') + "/files/article/html/" + page;
-                //    break;
+                case 4:
+                    url = site.TrimEnd('/') + "/files/article/html/" + page;
+                    break;
             }
             return url;
         }
@@ -239,8 +241,8 @@ namespace BilibiliProjects.NovelTest
         /// <returns></returns>
         private string AnalyzeContent(string s)
         {
-            string tmp;
-            List<string> tmp1;
+            string tmpStr;
+            List<string> tmpList;
             int tmpInt;
             //章节名，上一页，下一页
             switch (Tools.source.ID)
@@ -260,9 +262,9 @@ namespace BilibiliProjects.NovelTest
                     s = s.Replace("<p>", "").Replace("</p>", Environment.NewLine + "\t");
                     break;
                 case 1:
-                    tmp = Tools.GetBetweenText(s, "lastread.set(", ")");
-                    tmp1 = Tools.GetAllBetweenText(tmp, "'", "'");
-                    readtitle = tmp1[3].Trim();
+                    tmpStr = Tools.GetBetweenText(s, "lastread.set(", ")");
+                    tmpList = Tools.GetAllBetweenText(tmpStr, "'", "'");
+                    readtitle = tmpList[3].Trim();
                     s = s.Substring(s.IndexOf("<div id=\"nr1\">"));
                     preview_page = Tools.GetBetweenText(s, "pt_prev\" href=\"", "\"");
                     next_page = Tools.GetBetweenText(s, "pt_next\" href=\"", "\"");
@@ -273,8 +275,8 @@ namespace BilibiliProjects.NovelTest
                     break;
                 case 2:
                     readtitle = Tools.GetBetweenText(s, "<h1 id=\"_bqgmb_h1\">", "</h1>");
-                    tmp = Tools.GetBetweenText(s, "pt_prev", "pt_shouye"); //从上一页/上一章，取到下一页/下一章结束
-                    if(tmp.Contains("下ー页"))  //网页显示的不是“下一页”三个字，一/ー不一样
+                    tmpStr = Tools.GetBetweenText(s, "pt_prev", "pt_shouye"); //从上一页/上一章，取到下一页/下一章结束
+                    if(tmpStr.Contains("下ー页"))  //网页显示的不是“下一页”三个字，一/ー不一样
                     {
                         hasNextPage = true;
                     }
@@ -282,9 +284,9 @@ namespace BilibiliProjects.NovelTest
                     {
                         hasNextPage = false;
                     }
-                    if(tmp.Contains("上ー章"))  //不是“上一章”，是“上ー章”
+                    if(tmpStr.Contains("上ー章"))  //不是“上一章”，是“上ー章”
                         preview_page = Tools.GetBetweenText(s, "pt_prev\" href=\"", "\"");
-                    next_page = Tools.GetBetweenText(tmp, "pt_next\" href=\"", "\"");
+                    next_page = Tools.GetBetweenText(tmpStr, "pt_next\" href=\"", "\"");
                     index_page = Tools.GetBetweenText(s, "pt_mulu\" href=\"", "\"");
                     s = Tools.GetBetweenText(s, "<div id=\"nr1\">", "</div>"); //取主体
                     s = Tools.GetBetweenText(s, "</p>", "<p>");  //去掉“最新网址”之类的废话(如果有)
@@ -313,11 +315,11 @@ namespace BilibiliProjects.NovelTest
                 case 4:
                     readtitle = Tools.GetBetweenText(s.ToLower(), "<h1>", "</h1>").Trim();
                     //上一章
-                    tmp = Tools.GetBetweenText(s, "<div id=\"thumb\">", "</div>");
-                    tmp1 = Tools.GetAllBetweenText(tmp, "\"", "\"");
-                    preview_page = tmp1[0].TrimStart('.');
-                    next_page = tmp1[2].TrimStart('.');
-                    index_page = tmp1[1];
+                    tmpStr = Tools.GetBetweenText(s, "<div id=\"thumb\">", "</div>");
+                    tmpList = Tools.GetAllBetweenText(tmpStr, "\"", "\"");
+                    preview_page = tmpList[0].TrimStart('.');
+                    next_page = tmpList[2].TrimStart('.');
+                    index_page = tmpList[1];
                     s = Regex.Replace(s, "\\s*", "");
                     //取正文
                     s = Tools.GetBetweenText(s.ToLower(), "<p>", "</p>");
@@ -334,6 +336,7 @@ namespace BilibiliProjects.NovelTest
             int i = s.IndexOf(match.Value);
             if (i > 100)  //去除作者写的PS之类的废话，如果在开头写PS之类的，就不要去掉
                 s = s.Substring(0, i).Trim();
+            s = s.Replace("辛密", "秘密");  //常见错误词语
             foreach (string w in words)
             {
                 s = s.Replace(w, "");  //屏蔽词

@@ -34,31 +34,37 @@ namespace BilibiliProjects.NovelTest
             this.textBox_page = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.屏蔽选中词语ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button_pre = new System.Windows.Forms.Button();
             this.button_next = new System.Windows.Forms.Button();
             this.label_book = new System.Windows.Forms.Label();
             this.label_source = new System.Windows.Forms.Label();
             this.button_chapters = new System.Windows.Forms.Button();
             this.button_words = new System.Windows.Forms.Button();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.屏蔽选中词语ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
             // 
+            this.button1.BackColor = System.Drawing.Color.Teal;
+            this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.ForeColor = System.Drawing.Color.White;
             this.button1.Location = new System.Drawing.Point(273, 36);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
             this.button1.Text = "刷新当前页";
-            this.button1.UseVisualStyleBackColor = true;
+            this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.ButtonRefresh_Click);
             // 
             // textBox_page
             // 
             this.textBox_page.Location = new System.Drawing.Point(72, 36);
             this.textBox_page.Name = "textBox_page";
+            this.textBox_page.ReadOnly = true;
             this.textBox_page.Size = new System.Drawing.Size(195, 21);
             this.textBox_page.TabIndex = 4;
             this.textBox_page.Text = "3/3734/6857780";
@@ -87,24 +93,49 @@ namespace BilibiliProjects.NovelTest
             this.richTextBox1.TabIndex = 5;
             this.richTextBox1.Text = "";
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.屏蔽选中词语ToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(149, 26);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            // 
+            // 屏蔽选中词语ToolStripMenuItem
+            // 
+            this.屏蔽选中词语ToolStripMenuItem.Name = "屏蔽选中词语ToolStripMenuItem";
+            this.屏蔽选中词语ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.屏蔽选中词语ToolStripMenuItem.Text = "屏蔽选中词语";
+            this.屏蔽选中词语ToolStripMenuItem.Click += new System.EventHandler(this.屏蔽选中词语ToolStripMenuItem_Click);
+            // 
             // button_pre
             // 
+            this.button_pre.BackColor = System.Drawing.Color.Teal;
+            this.button_pre.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button_pre.FlatAppearance.BorderSize = 0;
+            this.button_pre.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_pre.ForeColor = System.Drawing.Color.White;
             this.button_pre.Location = new System.Drawing.Point(387, 36);
             this.button_pre.Name = "button_pre";
             this.button_pre.Size = new System.Drawing.Size(69, 23);
             this.button_pre.TabIndex = 6;
             this.button_pre.Text = "上一章";
-            this.button_pre.UseVisualStyleBackColor = true;
+            this.button_pre.UseVisualStyleBackColor = false;
             this.button_pre.Click += new System.EventHandler(this.button_pre_Click);
             // 
             // button_next
             // 
+            this.button_next.BackColor = System.Drawing.Color.Teal;
+            this.button_next.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button_next.FlatAppearance.BorderSize = 0;
+            this.button_next.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_next.ForeColor = System.Drawing.Color.White;
             this.button_next.Location = new System.Drawing.Point(462, 36);
             this.button_next.Name = "button_next";
             this.button_next.Size = new System.Drawing.Size(69, 23);
             this.button_next.TabIndex = 7;
             this.button_next.Text = "下一章";
-            this.button_next.UseVisualStyleBackColor = true;
+            this.button_next.UseVisualStyleBackColor = false;
             this.button_next.Click += new System.EventHandler(this.button_next_Click);
             // 
             // label_book
@@ -128,38 +159,33 @@ namespace BilibiliProjects.NovelTest
             // 
             // button_chapters
             // 
-            this.button_chapters.Location = new System.Drawing.Point(672, 34);
+            this.button_chapters.BackColor = System.Drawing.Color.Navy;
+            this.button_chapters.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button_chapters.FlatAppearance.BorderSize = 0;
+            this.button_chapters.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_chapters.ForeColor = System.Drawing.Color.White;
+            this.button_chapters.Location = new System.Drawing.Point(733, 34);
             this.button_chapters.Name = "button_chapters";
             this.button_chapters.Size = new System.Drawing.Size(75, 23);
             this.button_chapters.TabIndex = 12;
             this.button_chapters.Text = "章节列表";
-            this.button_chapters.UseVisualStyleBackColor = true;
+            this.button_chapters.UseVisualStyleBackColor = false;
             this.button_chapters.Click += new System.EventHandler(this.button_chapters_Click);
             // 
             // button_words
             // 
-            this.button_words.Location = new System.Drawing.Point(753, 34);
+            this.button_words.BackColor = System.Drawing.Color.Navy;
+            this.button_words.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button_words.FlatAppearance.BorderSize = 0;
+            this.button_words.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_words.ForeColor = System.Drawing.Color.White;
+            this.button_words.Location = new System.Drawing.Point(814, 34);
             this.button_words.Name = "button_words";
             this.button_words.Size = new System.Drawing.Size(75, 23);
             this.button_words.TabIndex = 13;
             this.button_words.Text = "屏蔽词管理";
-            this.button_words.UseVisualStyleBackColor = true;
+            this.button_words.UseVisualStyleBackColor = false;
             this.button_words.Click += new System.EventHandler(this.button_words_Click);
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.屏蔽选中词语ToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(149, 26);
-            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
-            // 
-            // 屏蔽选中词语ToolStripMenuItem
-            // 
-            this.屏蔽选中词语ToolStripMenuItem.Name = "屏蔽选中词语ToolStripMenuItem";
-            this.屏蔽选中词语ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.屏蔽选中词语ToolStripMenuItem.Text = "屏蔽选中词语";
-            this.屏蔽选中词语ToolStripMenuItem.Click += new System.EventHandler(this.屏蔽选中词语ToolStripMenuItem_Click);
             // 
             // ReadNovel
             // 

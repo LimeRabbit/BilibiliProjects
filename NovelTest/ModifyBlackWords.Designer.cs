@@ -41,12 +41,16 @@ namespace BilibiliProjects.NovelTest
             // 
             // button_ok
             // 
-            this.button_ok.Location = new System.Drawing.Point(178, 150);
+            this.button_ok.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.button_ok.FlatAppearance.BorderSize = 0;
+            this.button_ok.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_ok.ForeColor = System.Drawing.Color.White;
+            this.button_ok.Location = new System.Drawing.Point(187, 149);
             this.button_ok.Name = "button_ok";
             this.button_ok.Size = new System.Drawing.Size(75, 23);
             this.button_ok.TabIndex = 11;
             this.button_ok.Text = "确定修改";
-            this.button_ok.UseVisualStyleBackColor = true;
+            this.button_ok.UseVisualStyleBackColor = false;
             this.button_ok.Click += new System.EventHandler(this.button_ok_Click);
             // 
             // radioButton2

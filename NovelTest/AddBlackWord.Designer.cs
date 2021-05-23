@@ -87,12 +87,18 @@ namespace BilibiliProjects.NovelTest
             // 
             // button_ok
             // 
+            this.button_ok.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.button_ok.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button_ok.FlatAppearance.BorderSize = 0;
+            this.button_ok.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_ok.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.button_ok.ForeColor = System.Drawing.Color.White;
             this.button_ok.Location = new System.Drawing.Point(171, 102);
             this.button_ok.Name = "button_ok";
             this.button_ok.Size = new System.Drawing.Size(75, 23);
             this.button_ok.TabIndex = 5;
             this.button_ok.Text = "确定添加";
-            this.button_ok.UseVisualStyleBackColor = true;
+            this.button_ok.UseVisualStyleBackColor = false;
             this.button_ok.Click += new System.EventHandler(this.button_ok_Click);
             // 
             // AddBlackWord
