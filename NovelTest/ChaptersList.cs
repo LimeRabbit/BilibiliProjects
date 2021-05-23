@@ -206,10 +206,13 @@ namespace BilibiliProjects.NovelTest
                 button_delete.Enabled = false;
             else
             {
-                int index = listView1.SelectedIndices[0];
-                novel = itemsLv1[index].SubItems[0].Text;
-                label_novel.Text = novel; 
-                label_novel.Left = (Width - label_novel.Width) / 2;
+                if (all)
+                {
+                    int index = listView1.SelectedIndices[0];
+                    novel = itemsLv1[index].SubItems[0].Text;
+                    label_novel.Text = novel;
+                    label_novel.Left = (Width - label_novel.Width) / 2;
+                }
                 button_delete.Enabled = true;
             }
         }
