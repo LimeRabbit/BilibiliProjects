@@ -30,7 +30,7 @@ namespace BilibiliProjects.NovelTest
             ListViewItem[] items = new ListViewItem[table.Rows.Count];
             for (int i = 0; i < items.Length; i++)
             {
-                string[] ss = { table.Rows[i][0].ToString(), table.Rows[i][1].ToString(), table.Rows[i][2].ToString() };
+                string[] ss = { table.Rows[i][0].ToString(), table.Rows[i][1].ToString(), table.Rows[i][2].ToString(), table.Rows[i][3].ToString() };
                 items[i] = new ListViewItem(ss);
             }
             listView1.Items.AddRange(items);
@@ -63,7 +63,7 @@ namespace BilibiliProjects.NovelTest
             {
                 string word = listView1.SelectedItems[0].SubItems[0].Text;
                 word = word.Replace("'", "''");  //单引号转义
-                string date = listView1.SelectedItems[0].SubItems[2].Text;
+                string date = listView1.SelectedItems[0].SubItems[3].Text;
                 string sql = "delete from blackWords where words=@word and date=@date";
                 List<SQLiteParameter> parameters = new List<SQLiteParameter>();
                 parameters.Add(new SQLiteParameter("word", word));
@@ -77,8 +77,9 @@ namespace BilibiliProjects.NovelTest
         private void button_upd_Click(object sender, EventArgs e)
         {
             string word = listView1.SelectedItems[0].SubItems[0].Text;
-            string type = listView1.SelectedItems[0].SubItems[1].Text;
-            new ModifyBlackWords(word,type).ShowDialog();
+            string instead = listView1.SelectedItems[0].SubItems[1].Text;
+            string type = listView1.SelectedItems[0].SubItems[2].Text;
+            new ModifyBlackWords(word, instead, type).ShowDialog();
             GetData();
         }
 

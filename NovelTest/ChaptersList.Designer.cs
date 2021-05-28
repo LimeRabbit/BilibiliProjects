@@ -40,6 +40,7 @@ namespace BilibiliProjects.NovelTest
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.button_delete = new System.Windows.Forms.Button();
             this.button_clear = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label_novel
@@ -105,7 +106,7 @@ namespace BilibiliProjects.NovelTest
             this.columnHeader4});
             this.listView1.FullRowSelect = true;
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(12, 28);
+            this.listView1.Location = new System.Drawing.Point(12, 57);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(404, 118);
             this.listView1.TabIndex = 12;
@@ -132,7 +133,7 @@ namespace BilibiliProjects.NovelTest
             this.button_delete.FlatAppearance.BorderSize = 0;
             this.button_delete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_delete.ForeColor = System.Drawing.Color.White;
-            this.button_delete.Location = new System.Drawing.Point(422, 28);
+            this.button_delete.Location = new System.Drawing.Point(422, 57);
             this.button_delete.Name = "button_delete";
             this.button_delete.Size = new System.Drawing.Size(75, 23);
             this.button_delete.TabIndex = 13;
@@ -147,7 +148,7 @@ namespace BilibiliProjects.NovelTest
             this.button_clear.FlatAppearance.BorderSize = 0;
             this.button_clear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_clear.ForeColor = System.Drawing.Color.White;
-            this.button_clear.Location = new System.Drawing.Point(422, 57);
+            this.button_clear.Location = new System.Drawing.Point(422, 86);
             this.button_clear.Name = "button_clear";
             this.button_clear.Size = new System.Drawing.Size(75, 23);
             this.button_clear.TabIndex = 14;
@@ -155,11 +156,21 @@ namespace BilibiliProjects.NovelTest
             this.button_clear.UseVisualStyleBackColor = false;
             this.button_clear.Click += new System.EventHandler(this.button_clear_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 39);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(77, 12);
+            this.label1.TabIndex = 15;
+            this.label1.Text = "来源和章节数";
+            // 
             // ChaptersList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(505, 636);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.button_clear);
             this.Controls.Add(this.button_delete);
             this.Controls.Add(this.listView1);
@@ -188,5 +199,6 @@ namespace BilibiliProjects.NovelTest
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.Button button_delete;
         private System.Windows.Forms.Button button_clear;
+        private System.Windows.Forms.Label label1;
     }
 }

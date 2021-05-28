@@ -19,11 +19,16 @@ namespace BilibiliProjects.NovelTest
         public ChaptersList(string novel,bool all)
         {
             InitializeComponent();
-            this.novel = novel;
             this.all = all;
             label_novel.Text = novel;
-            label_novel.Left = (Width - label_novel.Width) / 2;
+            this.novel = novel;
             GetChapterCount();
+            if (all)
+            {
+                label_novel.Text = itemsLv1[0].SubItems[0].Text;
+                this.novel = itemsLv1[0].SubItems[0].Text;
+            }
+            label_novel.Left = (Width - label_novel.Width) / 2;
             Thread t = new Thread(delegate()
             {
                 if (all)  //显示第一个小说的章节

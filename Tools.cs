@@ -104,7 +104,7 @@ namespace BilibiliProjects
             //章节列表
             sql += "create table chapters(novel text,chapter text,webIndex text,site text);";
             //关键字黑名单，如果章节中出现这些词，将会替换成空。词语，类型(词语/正则表达式)，添加时间
-            sql += "create table blackWords(words text,type text,date text);";
+            sql += "create table blackWords(words text,insteadWords text,type text,date text);";
             MySqlite.ExecSql(sql);
         }
         /// <summary>  

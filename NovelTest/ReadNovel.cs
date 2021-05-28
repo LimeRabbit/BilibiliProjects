@@ -25,8 +25,7 @@ namespace BilibiliProjects.NovelTest
         string preview_page, next_page, index_page; //上一页，下一页，索引页(目录页)
         string novelName, readtitle;  //书名，章节名
         private const int GetContentCode = 0;
-        List<string> words;  //直接替换的词语
-        List<string> regexes;  //要替换的正则表达式
+        List<BlackWord> blackWords;  //要屏蔽和替换的词
         //需要传章节地址
         public ReadNovel(string address,string novelName)
         {
@@ -34,6 +33,12 @@ namespace BilibiliProjects.NovelTest
             this.novelName = novelName;
             textBox_page.Text = address;
             Init();
+        }
+        private void ReadNovel_Load(object sender, EventArgs e)
+        {
+            //这句话一定要放在窗体Load方法中才有效，不知道为什么
+            //防止自动选词，导致想选的内容选不上
+            richTextBox1.AutoWordSelection = false;
         }
         void Init()
         {
@@ -50,18 +55,20 @@ namespace BilibiliProjects.NovelTest
         /// </summary>
         void GetBlackWords()
         {
-            words = new List<string>();
-            regexes = new List<string>();
-            string sql = "select words,type from blackWords";
+            blackWords = new List<BlackWord>();
+            string sql = "select words,insteadWords,type from blackWords";
             DataTable table = MySqlite.GetData(sql);
+            BlackWord word1;
             for (int i = 0; i < table.Rows.Count; i++)
             {
+                word1 = new BlackWord();
                 string word = table.Rows[i][0].ToString().Trim();
-                string type= table.Rows[i][1].ToString().Trim();
-                if (type == "词语")
-                    words.Add(word);
-                else
-                    regexes.Add(word);
+                string instead = table.Rows[i][1].ToString().Trim();
+                string type = table.Rows[i][2].ToString().Trim();
+                word1.word = word;
+                word1.type = type;
+                word1.instead = instead;
+                blackWords.Add(word1);
             }
         }
 
@@ -184,6 +191,8 @@ namespace BilibiliProjects.NovelTest
         public void setSite(string site)
         {
             textBox_page.Text = site;
+            this.site = Tools.source.Site;
+            label_source.Text = "当前来源：" + this.site;
             GetContent();
         }
         //右键-添加到屏蔽词
@@ -202,8 +211,22 @@ namespace BilibiliProjects.NovelTest
 
             string s = richTextBox1.Text;
             s = s.Replace(txt, "");
-            richTextBox1.Text = s;
-            words.Add(txt);  //添加到屏蔽列表
+            richTextBox1.Text = s.TrimEnd();
+            BlackWord word = new BlackWord();
+            word.word = txt;
+            word.type = type;
+            word.instead = "";
+            blackWords.Add(word);
+        }
+        //右键--替换为
+        private void 替换为ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string txt = richTextBox1.SelectedText.Trim();
+            txt = txt.Replace("'", "''"); //单引号转义
+            new AddBlackWord(txt).ShowDialog();
+            GetBlackWords();
+            string s = richTextBox1.Text;
+            richTextBox1.Text = InsteadWords(s);
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
@@ -218,6 +241,12 @@ namespace BilibiliProjects.NovelTest
         {
             new BlackWords().ShowDialog(); //屏蔽词管理
             GetBlackWords();
+        }
+
+        private void trackBar_scale_Scroll(object sender, EventArgs e)
+        {
+            float f = trackBar_scale.Value / 10f;
+            richTextBox1.ZoomFactor = f;
         }
 
         string GetContentPage(string page)
@@ -336,16 +365,25 @@ namespace BilibiliProjects.NovelTest
             int i = s.IndexOf(match.Value);
             if (i > 100)  //去除作者写的PS之类的废话，如果在开头写PS之类的，就不要去掉
                 s = s.Substring(0, i).Trim();
-            s = s.Replace("辛密", "秘密");  //常见错误词语
-            foreach (string w in words)
-            {
-                s = s.Replace(w, "");  //屏蔽词
-            }
-            foreach (string r in regexes)
-            {
-                s= Regex.Replace(s, r, "");  //屏蔽的正则表达式
-            }
+            s = InsteadWords(s);
             return s.Trim();
+        }
+
+        /// <summary>
+        /// 使用已保存的规则替换词语
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        string InsteadWords(string s)
+        {
+            foreach (BlackWord word in blackWords)
+            {
+                if (word.type == "词语")
+                    s = s.Replace(word.word, word.instead);  //屏蔽词
+                else
+                    s = Regex.Replace(s, word.word, word.instead);  //屏蔽的正则表达式
+            }
+            return s;
         }
 
         /// <summary>
@@ -369,6 +407,15 @@ namespace BilibiliProjects.NovelTest
             parameters.Add(new SQLiteParameter("date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
             MySqlite.ExecSql(sql, parameters);
         }
-        
+
+
+    }
+    class BlackWord
+    {
+        public BlackWord() { }
+        public string word;
+        public string instead;
+        public string type;
+        public string date;
     }
 }

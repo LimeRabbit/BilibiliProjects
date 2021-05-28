@@ -45,7 +45,7 @@
             this.label12 = new System.Windows.Forms.Label();
             this.label_conditioncolor = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.hintTextBox_condition = new BilibiliProjects.HintTextBox();
+            this.hintTextBox_condition = new HintTextBox();
             this.hintTextBox_equal = new BilibiliProjects.HintTextBox();
             this.chemicalEquation1 = new BilibiliProjects.ChemicalEquation();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_fontsize)).BeginInit();

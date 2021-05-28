@@ -37,12 +37,14 @@ namespace BilibiliProjects.NovelTest
             this.button_del = new System.Windows.Forms.Button();
             this.button_upd = new System.Windows.Forms.Button();
             this.button_clr = new System.Windows.Forms.Button();
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // listView1
             // 
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
+            this.columnHeader4,
             this.columnHeader2,
             this.columnHeader3});
             this.listView1.FullRowSelect = true;
@@ -58,7 +60,7 @@ namespace BilibiliProjects.NovelTest
             // columnHeader1
             // 
             this.columnHeader1.Text = "屏蔽词";
-            this.columnHeader1.Width = 230;
+            this.columnHeader1.Width = 162;
             // 
             // columnHeader2
             // 
@@ -132,6 +134,11 @@ namespace BilibiliProjects.NovelTest
             this.button_clr.UseVisualStyleBackColor = false;
             this.button_clr.Click += new System.EventHandler(this.button_clr_Click);
             // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "替换为...";
+            this.columnHeader4.Width = 110;
+            // 
             // BlackWords
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -159,5 +166,6 @@ namespace BilibiliProjects.NovelTest
         private System.Windows.Forms.Button button_del;
         private System.Windows.Forms.Button button_upd;
         private System.Windows.Forms.Button button_clr;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
     }
 }
