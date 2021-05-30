@@ -202,7 +202,7 @@ namespace BilibiliProjects.NovelTest
             txt = txt.Replace("'", "''"); //单引号转义
             string type = "词语";
             //添加到数据库
-            string sql = "insert into blackWords values(@word,@type,@date)";
+            string sql = "insert into blackWords values(@word,'',@type,@date)";
             List<SQLiteParameter> parameters = new List<SQLiteParameter>();
             parameters.Add(new SQLiteParameter("word", txt));
             parameters.Add(new SQLiteParameter("type", type));
@@ -354,11 +354,11 @@ namespace BilibiliProjects.NovelTest
                     s = Tools.GetBetweenText(s.ToLower(), "<p>", "</p>");
                     s = Regex.Replace(s, "((\\s)|(&nbsp;))+", ""); //去除空白
                     s = Regex.Replace(s, "(<br\\s*/>)+", Environment.NewLine + "\t");
-                    tmpInt = s.IndexOf("(本章完)");
-                    if (tmpInt > -1)
-                        s = s.Substring(0, tmpInt);
                     break;
             }
+            tmpInt = s.IndexOf("(本章完)");
+            if (tmpInt > -1)
+                s = s.Substring(0, tmpInt);
 
             Regex r2 = new Regex("(PS：)|(ＰＳ：)|(PS:)|(ＰＳ:)", RegexOptions.IgnoreCase);
             Match match = r2.Match(s);
