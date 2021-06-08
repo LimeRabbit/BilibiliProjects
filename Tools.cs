@@ -311,6 +311,80 @@ namespace BilibiliProjects
 
             return strText;
         }
+
+        /// <summary>
+        /// 判断文本文件的编码
+        /// </summary>
+        /// <param name="filename">文件名</param>
+        /// <returns>编码</returns>
+        public static Encoding GetFileEncodeType(string filename)
+        {
+            FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fs);
+            int.TryParse(fs.Length.ToString(), out int i);
+            byte[] buffer = br.ReadBytes(i);
+            if (IsUTF8Bytes(buffer) || (buffer[0] == 0xEF && buffer[1] == 0xBB))
+            {
+                return Encoding.UTF8;
+            }
+            else if (buffer[0] == 0xFE && buffer[1] == 0xFF)
+            {
+                return Encoding.BigEndianUnicode;
+            }
+            else if (buffer[0] == 0xFF && buffer[1] == 0xFE)
+            {
+                return Encoding.Unicode;
+            }
+            else
+            {
+                return Encoding.Default;
+            }
+        }
+
+        /// <summary>
+        /// 判断是否为不带 BOM 的 UTF8 格式
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private static bool IsUTF8Bytes(byte[] data)
+        {
+            int charByteCounter = 1; //计算当前正分析的字符应还有的字节数
+            byte curByte; //当前分析的字节.
+            for (int i = 0; i < data.Length; i++)
+            {
+                curByte = data[i];
+                if (charByteCounter == 1)
+                {
+                    if (curByte >= 0x80)
+                    {
+                        //判断当前
+                        while (((curByte <<= 1) & 0x80) != 0)
+                        {
+                            charByteCounter++;
+                        }
+                        //标记位首位若为非0 则至少以2个1开始 如:110XXXXX...........1111110X
+                        if (charByteCounter == 1 || charByteCounter > 6)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    //若是UTF-8 此时第一位必须为1
+                    if ((curByte & 0xC0) != 0x80)
+                    {
+                        return false;
+                    }
+                    charByteCounter--;
+                }
+            }
+            if (charByteCounter > 1)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 
     /// <summary>

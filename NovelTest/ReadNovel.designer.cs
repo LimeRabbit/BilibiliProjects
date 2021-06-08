@@ -36,15 +36,15 @@ namespace BilibiliProjects.NovelTest
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.屏蔽选中词语ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.替换为ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button_pre = new System.Windows.Forms.Button();
             this.button_next = new System.Windows.Forms.Button();
             this.label_book = new System.Windows.Forms.Label();
             this.label_source = new System.Windows.Forms.Label();
             this.button_chapters = new System.Windows.Forms.Button();
             this.button_words = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.label_scale = new System.Windows.Forms.Label();
             this.trackBar_scale = new System.Windows.Forms.TrackBar();
-            this.替换为ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
             this.SuspendLayout();
@@ -103,15 +103,22 @@ namespace BilibiliProjects.NovelTest
             this.屏蔽选中词语ToolStripMenuItem,
             this.替换为ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(125, 48);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // 屏蔽选中词语ToolStripMenuItem
             // 
             this.屏蔽选中词语ToolStripMenuItem.Name = "屏蔽选中词语ToolStripMenuItem";
-            this.屏蔽选中词语ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.屏蔽选中词语ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.屏蔽选中词语ToolStripMenuItem.Text = "屏蔽该词";
             this.屏蔽选中词语ToolStripMenuItem.Click += new System.EventHandler(this.屏蔽选中词语ToolStripMenuItem_Click);
+            // 
+            // 替换为ToolStripMenuItem
+            // 
+            this.替换为ToolStripMenuItem.Name = "替换为ToolStripMenuItem";
+            this.替换为ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.替换为ToolStripMenuItem.Text = "替换为…";
+            this.替换为ToolStripMenuItem.Click += new System.EventHandler(this.替换为ToolStripMenuItem_Click);
             // 
             // button_pre
             // 
@@ -169,7 +176,7 @@ namespace BilibiliProjects.NovelTest
             this.button_chapters.FlatAppearance.BorderSize = 0;
             this.button_chapters.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_chapters.ForeColor = System.Drawing.Color.White;
-            this.button_chapters.Location = new System.Drawing.Point(733, 34);
+            this.button_chapters.Location = new System.Drawing.Point(539, 36);
             this.button_chapters.Name = "button_chapters";
             this.button_chapters.Size = new System.Drawing.Size(75, 23);
             this.button_chapters.TabIndex = 12;
@@ -184,7 +191,7 @@ namespace BilibiliProjects.NovelTest
             this.button_words.FlatAppearance.BorderSize = 0;
             this.button_words.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_words.ForeColor = System.Drawing.Color.White;
-            this.button_words.Location = new System.Drawing.Point(814, 34);
+            this.button_words.Location = new System.Drawing.Point(620, 36);
             this.button_words.Name = "button_words";
             this.button_words.Size = new System.Drawing.Size(75, 23);
             this.button_words.TabIndex = 13;
@@ -192,34 +199,28 @@ namespace BilibiliProjects.NovelTest
             this.button_words.UseVisualStyleBackColor = false;
             this.button_words.Click += new System.EventHandler(this.button_words_Click);
             // 
-            // label1
+            // label_scale
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(385, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 12);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "缩放";
+            this.label_scale.AutoSize = true;
+            this.label_scale.Location = new System.Drawing.Point(385, 12);
+            this.label_scale.Name = "label_scale";
+            this.label_scale.Size = new System.Drawing.Size(59, 12);
+            this.label_scale.TabIndex = 14;
+            this.label_scale.Text = "缩放：1倍";
             // 
             // trackBar_scale
             // 
             this.trackBar_scale.AutoSize = false;
-            this.trackBar_scale.Location = new System.Drawing.Point(420, 8);
-            this.trackBar_scale.Maximum = 25;
-            this.trackBar_scale.Minimum = 5;
+            this.trackBar_scale.Location = new System.Drawing.Point(462, 6);
+            this.trackBar_scale.Maximum = 30;
+            this.trackBar_scale.Minimum = 10;
             this.trackBar_scale.Name = "trackBar_scale";
-            this.trackBar_scale.Size = new System.Drawing.Size(111, 24);
+            this.trackBar_scale.Size = new System.Drawing.Size(233, 24);
             this.trackBar_scale.TabIndex = 15;
+            this.trackBar_scale.TickFrequency = 2;
             this.trackBar_scale.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBar_scale.Value = 10;
             this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar_scale_Scroll);
-            // 
-            // 替换为ToolStripMenuItem
-            // 
-            this.替换为ToolStripMenuItem.Name = "替换为ToolStripMenuItem";
-            this.替换为ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.替换为ToolStripMenuItem.Text = "替换为…";
-            this.替换为ToolStripMenuItem.Click += new System.EventHandler(this.替换为ToolStripMenuItem_Click);
             // 
             // ReadNovel
             // 
@@ -227,7 +228,7 @@ namespace BilibiliProjects.NovelTest
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(901, 693);
             this.Controls.Add(this.trackBar_scale);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.label_scale);
             this.Controls.Add(this.button_words);
             this.Controls.Add(this.button_chapters);
             this.Controls.Add(this.label_source);
@@ -264,9 +265,9 @@ namespace BilibiliProjects.NovelTest
         private System.Windows.Forms.Button button_words;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 屏蔽选中词语ToolStripMenuItem;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TrackBar trackBar_scale;
         private System.Windows.Forms.ToolStripMenuItem 替换为ToolStripMenuItem;
+        private System.Windows.Forms.Label label_scale;
     }
 }
 

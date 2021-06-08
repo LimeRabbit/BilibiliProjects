@@ -246,7 +246,8 @@ namespace BilibiliProjects.NovelTest
         private void trackBar_scale_Scroll(object sender, EventArgs e)
         {
             float f = trackBar_scale.Value / 10f;
-            richTextBox1.ZoomFactor = f;
+            label_scale.Text = "缩放：" + f + "倍";
+            richTextBox1.Font = new Font(Font.FontFamily, Font.Size * 1.3f * f);
         }
 
         string GetContentPage(string page)
