@@ -53,6 +53,7 @@ namespace BilibiliProjects.NovelTest
             this.comboBox_Source = new System.Windows.Forms.ComboBox();
             this.label_state = new System.Windows.Forms.Label();
             this.button_chapter = new System.Windows.Forms.Button();
+            this.checkBox_night_mode = new System.Windows.Forms.CheckBox();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -279,11 +280,24 @@ namespace BilibiliProjects.NovelTest
             this.button_chapter.UseVisualStyleBackColor = false;
             this.button_chapter.Click += new System.EventHandler(this.button_chapter_Click);
             // 
+            // checkBox_night_mode
+            // 
+            this.checkBox_night_mode.AutoSize = true;
+            this.checkBox_night_mode.BackColor = System.Drawing.Color.Transparent;
+            this.checkBox_night_mode.Location = new System.Drawing.Point(838, 17);
+            this.checkBox_night_mode.Name = "checkBox_night_mode";
+            this.checkBox_night_mode.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_night_mode.TabIndex = 20;
+            this.checkBox_night_mode.Text = "夜间模式";
+            this.checkBox_night_mode.UseVisualStyleBackColor = false;
+            this.checkBox_night_mode.CheckedChanged += new System.EventHandler(this.checkBox_night_mode_CheckedChanged);
+            // 
             // Search
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1574, 747);
+            this.Controls.Add(this.checkBox_night_mode);
             this.Controls.Add(this.button_chapter);
             this.Controls.Add(this.label_state);
             this.Controls.Add(this.comboBox_Source);
@@ -331,5 +345,6 @@ namespace BilibiliProjects.NovelTest
         private System.Windows.Forms.ComboBox comboBox_Source;
         private System.Windows.Forms.Label label_state;
         private System.Windows.Forms.Button button_chapter;
+        private System.Windows.Forms.CheckBox checkBox_night_mode;
     }
 }

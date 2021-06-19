@@ -16,6 +16,7 @@ namespace BilibiliProjects.NovelTest
         public ModifyBlackWords(string word,string instead,string type)
         {
             InitializeComponent();
+            UIColors.SetControlColors(this);
             textBox_source.Text = word;
             textBox_sourceinstead.Text = instead;
             textBox_des.Text = word;

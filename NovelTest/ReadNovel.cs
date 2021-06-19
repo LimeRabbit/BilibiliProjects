@@ -21,11 +21,12 @@ namespace BilibiliProjects.NovelTest
     {
         Tools tools;
         string site = "m.31xs.com/";  //网站
-        string url="";
+        string url = "";
         string preview_page, next_page, index_page; //上一页，下一页，索引页(目录页)
         string novelName, readtitle;  //书名，章节名
         private const int GetContentCode = 0;
         List<BlackWord> blackWords;  //要屏蔽和替换的词
+        List<Chapter> chapters;  //当前阅读小说的所有本地章节
         //需要传章节地址
         public ReadNovel(string address,string novelName)
         {
@@ -42,10 +43,13 @@ namespace BilibiliProjects.NovelTest
         }
         void Init()
         {
+            UIColors.SetControlColors(this);
+            checkBox_night_mode.Checked = UIColors.IsNightMode;
             site = Tools.source.Site;
             label_source.Text = "当前来源：" + site;
             tools = new Tools();
             tools.HTMLGetCompleted += Tools_HTMLGetCompleted;
+            GetChapters(Tools.source.ID, novelName);
             GetBlackWords();
             GetContent();
         }
@@ -56,7 +60,7 @@ namespace BilibiliProjects.NovelTest
         void GetBlackWords()
         {
             blackWords = new List<BlackWord>();
-            string sql = "select words,insteadWords,type from blackWords";
+            string sql = "select words,insteadWords,type from blackWords order by length(words) desc";
             DataTable table = MySqlite.GetData(sql);
             BlackWord word1;
             for (int i = 0; i < table.Rows.Count; i++)
@@ -128,6 +132,10 @@ namespace BilibiliProjects.NovelTest
                             //将当期页的信息存入数据库
                             Chapter chapter = new Chapter(novelName, readtitle, page);
                             UpdateData(chapter);
+                            if(checkBox_autosave.Checked)  //自动保存到本地
+                            {
+                                Button_save_Click(null, null);
+                            }
                         }
                         break;
                 }
@@ -140,7 +148,7 @@ namespace BilibiliProjects.NovelTest
 
         private void ButtonRefresh_Click(object sender, EventArgs e)
         {
-            GetContent();
+            GetContent(true);  //true：强制刷新，从网络获取内容
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -166,13 +174,54 @@ namespace BilibiliProjects.NovelTest
         /// <summary>
         /// 获取章节内容
         /// </summary>
-        private void GetContent()
+        private void GetContent(bool forceRefresh=false)
         {
             //章节页地址
             page = textBox_page.Text.Trim();
             //非空判断
             if (string.IsNullOrEmpty(page))
                 return;
+
+            //不是强制刷新，如果本地有文件，则读取
+            if (!forceRefresh)
+            {
+                List<Chapter> tmpList = chapters.Where(c => c.site == page).ToList();
+                if (tmpList.Count > 0)  //寻找一样的章节，根据网址寻找
+                {
+                    string chapter1 = tmpList[0].chapter;
+                    string path = Application.StartupPath + "\\SavedNovels\\" + novelName + "\\" + chapter1 + ".novel";
+                    if (File.Exists(path))  //读取本地内容
+                    {
+                        label_book.Text = "《" + novelName + "》 " + chapter1;
+                        richTextBox1.Focus();
+                        richTextBox1.SelectionStart = 0;
+                        //将当期页的信息存入数据库
+                        Chapter chapter = new Chapter(novelName, chapter1, page);
+                        UpdateData(chapter);
+                        int index = chapters.IndexOf(tmpList[0]);
+                        if (index < chapters.Count - 1) //下一章地址
+                        {
+                            next_page = chapters[index + 1].site;
+                        }
+                        if (index > 0)  //上一章地址
+                        {
+                            preview_page = chapters[index - 1].site;
+                        }
+                        byte[] bytes = File.ReadAllBytes(path);
+                        string text = Compress.DecompressString(bytes);
+                        if (text != null)
+                        {
+                            richTextBox1.Text = text;
+                        }
+                        else  //解压失败，有可能是未压缩，也有可能是数据损坏
+                        {
+                            richTextBox1.Text = Encoding.UTF8.GetString(bytes);
+                        }
+                        return;
+                    }
+                }
+            }
+
             richTextBox1.Text = "";
             label_book.Text = "获取中……";
             textBox_page.Enabled = false;
@@ -195,7 +244,7 @@ namespace BilibiliProjects.NovelTest
             label_source.Text = "当前来源：" + this.site;
             GetContent();
         }
-        //右键-添加到屏蔽词
+        //右键--屏蔽
         private void 屏蔽选中词语ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string txt = richTextBox1.SelectedText.Trim();
@@ -232,9 +281,15 @@ namespace BilibiliProjects.NovelTest
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
             if (richTextBox1.SelectionLength == 0)
+            {
                 contextMenuStrip1.Items[0].Enabled = false;
+                contextMenuStrip1.Items[1].Enabled = false;
+            }
             else
+            {
                 contextMenuStrip1.Items[0].Enabled = true;
+                contextMenuStrip1.Items[1].Enabled = true;
+            }
         }
 
         private void button_words_Click(object sender, EventArgs e)
@@ -247,7 +302,7 @@ namespace BilibiliProjects.NovelTest
         {
             float f = trackBar_scale.Value / 10f;
             label_scale.Text = "缩放：" + f + "倍";
-            richTextBox1.Font = new Font(Font.FontFamily, Font.Size * 1.3f * f);
+            richTextBox1.Font = new Font(Font.FontFamily, f*10);
         }
 
         string GetContentPage(string page)
@@ -264,6 +319,7 @@ namespace BilibiliProjects.NovelTest
             }
             return url;
         }
+
         /// <summary>
         /// 解析内容
         /// </summary>
@@ -366,6 +422,8 @@ namespace BilibiliProjects.NovelTest
             int i = s.IndexOf(match.Value);
             if (i > 100)  //去除作者写的PS之类的废话，如果在开头写PS之类的，就不要去掉
                 s = s.Substring(0, i).Trim();
+            //避免有形如 &#dddd; &#xdddd; 之类的字符串出现
+            s = System.Web.HttpUtility.HtmlDecode(s);
             s = InsteadWords(s);
             return s.Trim();
         }
@@ -385,6 +443,12 @@ namespace BilibiliProjects.NovelTest
                     s = Regex.Replace(s, word.word, word.instead);  //屏蔽的正则表达式
             }
             return s;
+        }
+
+        private void checkBox_night_mode_CheckedChanged(object sender, EventArgs e)
+        {
+            UIColors.SetNightMode(checkBox_night_mode.Checked);
+            UIColors.SetControlColors(this);
         }
 
         /// <summary>
@@ -409,7 +473,47 @@ namespace BilibiliProjects.NovelTest
             MySqlite.ExecSql(sql, parameters);
         }
 
+        private void Button_save_Click(object sender, EventArgs e)
+        {
+            string s = richTextBox1.Text;
+            byte[] bytes;
+            if(checkBox_compress.Checked)
+            {
+                bytes = Compress.CompressString(s);
+            }
+            else
+            {
+                bytes = Encoding.UTF8.GetBytes(s);
+            }
+            string path = Application.StartupPath + "\\SavedNovels\\" + novelName;
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            File.WriteAllBytes(path + "\\" + readtitle + ".novel", bytes);
+        }
 
+        /// <summary>
+        /// 从本地数据库获取章节，该方法是从ChaptersList中拷贝来的
+        /// </summary>
+        void GetChapters(int sourceID, string novel)
+        {
+            chapters = new List<Chapter>();
+            Chapter chapter;
+            //根据小说名和网站查找
+            string sql = "select * from chapters where novel=@novel and webIndex=@index";
+            List<SQLiteParameter> parameters = new List<SQLiteParameter>();
+            parameters.Add(new SQLiteParameter("index", sourceID));
+            parameters.Add(new SQLiteParameter("novel", novel));
+            DataTable table = MySqlite.GetData(sql, parameters);
+            for (int i = 0; i < table.Rows.Count; i++)
+            {
+                chapter = new Chapter();
+                chapter.novel = table.Rows[i][0].ToString();
+                chapter.chapter = table.Rows[i][1].ToString();
+                chapter.web = Convert.ToInt32(table.Rows[i][2].ToString());
+                chapter.site = table.Rows[i][3].ToString();
+                chapters.Add(chapter);
+            }
+        }
     }
     class BlackWord
     {

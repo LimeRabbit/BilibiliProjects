@@ -35,7 +35,7 @@ namespace BilibiliProjects.NovelTest
             {
                 Tools.CreateTable();  //不存在数据库，创建新表
             }
-
+            UIColors.SetControlColors(this);
             webTools = new Tools();
             //网络请求结束的事件
             webTools.HTMLGetCompleted += Tools_HTMLGetCompleted;
@@ -526,6 +526,12 @@ namespace BilibiliProjects.NovelTest
         private void button_chapter_Click(object sender, EventArgs e)
         {
             new ChaptersList("全部小说", true).ShowDialog();
+        }
+
+        private void checkBox_night_mode_CheckedChanged(object sender, EventArgs e)
+        {
+            UIColors.SetNightMode(checkBox_night_mode.Checked);
+            UIColors.SetControlColors(this);
         }
     }
 }

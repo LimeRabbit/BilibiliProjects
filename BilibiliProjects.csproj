@@ -118,6 +118,7 @@
     <Compile Include="ChemicalForm.Designer.cs">
       <DependentUpon>ChemicalForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Compress.cs" />
     <Compile Include="ComputerManager.cs" />
     <Compile Include="DirectBitmap.cs" />
     <Compile Include="DrawVertifyCode.cs">
@@ -238,6 +239,7 @@
       <DependentUpon>Subtitle.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools.cs" />
+    <Compile Include="NovelTest\UIColors.cs" />
     <EmbeddedResource Include="ChemicalForm.resx">
       <DependentUpon>ChemicalForm.cs</DependentUpon>
     </EmbeddedResource>

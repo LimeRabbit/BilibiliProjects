@@ -20,6 +20,7 @@ namespace BilibiliProjects.NovelTest
         {
             InitializeComponent();
             this.form = form;
+            UIColors.SetControlColors(this);
             GetData();
         }
 

@@ -198,10 +198,12 @@ namespace BilibiliProjects.NovelTest
             DialogResult dr = MessageBox.Show("确定清空所有章节记录吗？", "提示", MessageBoxButtons.OKCancel);
             if (dr == DialogResult.OK)
             {
-                string sql = "delete from chapters";
+                //书架上面的不删
+                string sql = "delete from chapters where novel not in (select distinct novel from bookshelf) or webindex not in(select distinct webindex from bookshelf) ";
                 MySqlite.ExecSql(sql);
                 listView1.Items.Clear();  //不是虚拟模式，直接clear就好
                 listView2.VirtualListSize = 0;  //虚拟模式下，需要设置size才能清空
+                GetChapterCount();//重新获取
             }
         }
 
@@ -211,9 +213,9 @@ namespace BilibiliProjects.NovelTest
                 button_delete.Enabled = false;
             else
             {
+                int index = listView1.SelectedIndices[0];
                 if (all)
                 {
-                    int index = listView1.SelectedIndices[0];
                     novel = itemsLv1[index].SubItems[0].Text;
                     label_novel.Text = novel;
                     label_novel.Left = (Width - label_novel.Width) / 2;
@@ -228,7 +230,7 @@ namespace BilibiliProjects.NovelTest
             if (dr == DialogResult.OK)
             {
                 int index = listView1.SelectedIndices[0];
-                string sql = "delete from chapters where novel=@novel and webIndex=@web";
+                string sql = "delete from chapters where novel=@novel and webIndex=@web and novel not in (select distinct novel from bookshelf) or webindex not in(select distinct webindex from bookshelf) ";
                 List<SQLiteParameter> parameters = new List<SQLiteParameter>();
                 parameters.Add(new SQLiteParameter("novel", novel));
                 parameters.Add(new SQLiteParameter("web", sourceIndex[index]));

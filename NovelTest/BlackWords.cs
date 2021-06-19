@@ -16,6 +16,7 @@ namespace BilibiliProjects.NovelTest
         public BlackWords()
         {
             InitializeComponent();
+            UIColors.SetControlColors(this);
             GetData();
         }
 

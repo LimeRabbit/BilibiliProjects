@@ -16,10 +16,12 @@ namespace BilibiliProjects.NovelTest
         public AddBlackWord()
         {
             InitializeComponent();
+            UIColors.SetControlColors(this);
         }
         public AddBlackWord(string word)
         {
             InitializeComponent();
+            UIColors.SetControlColors(this);
             textBox1.Text = word;
             textBox2.Focus();
         }
