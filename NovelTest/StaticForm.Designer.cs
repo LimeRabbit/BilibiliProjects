@@ -37,6 +37,7 @@ namespace BilibiliProjects.NovelTest
             this.label_week3 = new System.Windows.Forms.Label();
             this.label_week2 = new System.Windows.Forms.Label();
             this.label_week1 = new System.Windows.Forms.Label();
+            this.button_clear = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -141,11 +142,27 @@ namespace BilibiliProjects.NovelTest
             this.label_week1.TabIndex = 0;
             this.label_week1.Text = "阅读时长：0秒";
             // 
+            // button_clear
+            // 
+            this.button_clear.BackColor = System.Drawing.Color.Maroon;
+            this.button_clear.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button_clear.FlatAppearance.BorderSize = 0;
+            this.button_clear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_clear.ForeColor = System.Drawing.Color.White;
+            this.button_clear.Location = new System.Drawing.Point(243, 153);
+            this.button_clear.Name = "button_clear";
+            this.button_clear.Size = new System.Drawing.Size(75, 23);
+            this.button_clear.TabIndex = 15;
+            this.button_clear.Text = "清空数据";
+            this.button_clear.UseVisualStyleBackColor = false;
+            this.button_clear.Click += new System.EventHandler(this.button_clear_Click);
+            // 
             // StaticForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(559, 155);
+            this.ClientSize = new System.Drawing.Size(559, 182);
+            this.Controls.Add(this.button_clear);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.MaximizeBox = false;
@@ -154,6 +171,7 @@ namespace BilibiliProjects.NovelTest
             this.Text = "统计信息";
             this.Controls.SetChildIndex(this.groupBox1, 0);
             this.Controls.SetChildIndex(this.groupBox2, 0);
+            this.Controls.SetChildIndex(this.button_clear, 0);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -173,5 +191,6 @@ namespace BilibiliProjects.NovelTest
         private System.Windows.Forms.Label label_week3;
         private System.Windows.Forms.Label label_week2;
         private System.Windows.Forms.Label label_week1;
+        private System.Windows.Forms.Button button_clear;
     }
 }

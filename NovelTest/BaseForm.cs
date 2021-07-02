@@ -82,6 +82,7 @@ namespace BilibiliProjects.NovelTest
 
         private void ToolStrip_setting_Click(object sender, EventArgs e)
         {
+            BeforeSetting();
             new Settings(this).ShowDialog();
             WriteSetting();
             AfterSetting();
@@ -143,6 +144,10 @@ namespace BilibiliProjects.NovelTest
 
         }
 
+        public virtual void BeforeSetting()
+        {
+            //设置页面打开之前调用该方法，如有需要请用 override 重写
+        }
         public virtual void AfterSetting()
         {
             //设置页面关闭之后调用该方法，如有需要请用 override 重写
@@ -150,12 +155,24 @@ namespace BilibiliProjects.NovelTest
 
         private void ToolStrip_about_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("小说阅读器\nB站账号 @玩游戏的程序猿", "提示");
+            new AboutForm().ShowDialog();
         }
 
         private void ToolStrip_statistics_Click(object sender, EventArgs e)
         {
-            new StaticForm().ShowDialog();
+            BeforeStatistics();
+            new StaticForm(this).ShowDialog();//打开统计页面
+            AfterStatistics();
+        }
+        
+        public virtual void BeforeStatistics()
+        {
+            //打开统计页面之前要做的事情，如有需要请重写
+        }
+        
+        public virtual void AfterStatistics()
+        {
+            //关闭统计页面之后要做的事情，如有需要请重写
         }
     }
 }

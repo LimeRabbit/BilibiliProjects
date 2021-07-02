@@ -447,13 +447,34 @@ namespace BilibiliProjects.NovelTest
             }
             return s;
         }
-
+        //打开统计页面和设置页面的时候，不需要累计阅读时间
+        //所以在打开之前停止计时，关闭之后继续计时
+        public override void BeforeSetting()
+        {
+            DateTime time_end = DateTime.Now;
+            record.seconds += (int)(time_end - time_start).TotalSeconds;
+            SetRecordToDB();
+        }
         /// <summary>
         /// 重写父类的方法，设置窗体关闭之后的动作
         /// </summary>
         public override void AfterSetting()
         {
             richTextBox1.Font = Setting.Font;
+            time_start = DateTime.Now;
+        }
+
+        public override void BeforeStatistics()
+        {
+            //打开统计页面之前，把时间统计一下
+            DateTime time_end = DateTime.Now;
+            record.seconds += (int)(time_end - time_start).TotalSeconds;
+            SetRecordToDB();
+        }
+        public override void AfterStatistics()
+        {
+            //统计页面关闭之后，重新开始计时
+            time_start = DateTime.Now;
         }
 
         private void linkLabel_copy_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -500,7 +521,7 @@ namespace BilibiliProjects.NovelTest
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             //文件名中不能含有以下字符： \/:*?"<>|
-            string filename = Regex.Replace(readtitle, "[\\|\\/|\\:|\\*|\\?|\"|\\<|\\>|\\|]", "");
+            string filename = Regex.Replace(readtitle, "[\\\\|\\/|\\:|\\*|\\?|\"|\\<|\\>|\\|]", "");
             path += "\\" + filename + ".novel";
             try
             {
@@ -599,6 +620,17 @@ namespace BilibiliProjects.NovelTest
             parameters.Add(new SQLiteParameter("regex", record.regexCount));
             parameters.Add(new SQLiteParameter("read", record.seconds));
             MySqlite.ExecSql(sql, parameters);
+        }
+
+        /// <summary>
+        /// 在统计界面点击清空记录，会执行该方法
+        /// </summary>
+        public void ClearRecord()
+        {
+            time_start = DateTime.Now;
+            record.wordCount = 0;
+            record.regexCount = 0;
+            record.seconds = 0;
         }
     }
     class BlackWord

@@ -170,6 +170,12 @@
     <Compile Include="NomalTools.Designer.cs">
       <DependentUpon>NomalTools.cs</DependentUpon>
     </Compile>
+    <Compile Include="NovelTest\AboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NovelTest\AboutForm.Designer.cs">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="NovelTest\AddBlackWord.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -288,6 +294,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="NomalTools.resx">
       <DependentUpon>NomalTools.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NovelTest\AboutForm.resx">
+      <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NovelTest\AddBlackWord.resx">
       <DependentUpon>AddBlackWord.cs</DependentUpon>
