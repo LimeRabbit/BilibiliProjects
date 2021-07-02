@@ -8,10 +8,11 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>BilibiliProjects</RootNamespace>
     <AssemblyName>BilibiliProjects</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,12 +25,11 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,6 +47,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -90,18 +92,16 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.114.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+    <Reference Include="System.Data.SQLite, Version=1.0.60.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\System.Data.SQLite.DLL</HintPath>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -176,6 +176,12 @@
     <Compile Include="NovelTest\AddBlackWord.Designer.cs">
       <DependentUpon>AddBlackWord.cs</DependentUpon>
     </Compile>
+    <Compile Include="NovelTest\BaseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NovelTest\BaseForm.Designer.cs">
+      <DependentUpon>BaseForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="NovelTest\BlackWords.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -200,6 +206,12 @@
     <Compile Include="NovelTest\ModifyBlackWords.Designer.cs">
       <DependentUpon>ModifyBlackWords.cs</DependentUpon>
     </Compile>
+    <Compile Include="NovelTest\ProgressForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NovelTest\ProgressForm.Designer.cs">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="NovelTest\ReadNovel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -211,6 +223,19 @@
     </Compile>
     <Compile Include="NovelTest\Search.designer.cs">
       <DependentUpon>Search.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NovelTest\Setting.cs" />
+    <Compile Include="NovelTest\Settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NovelTest\Settings.Designer.cs">
+      <DependentUpon>Settings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NovelTest\StaticForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NovelTest\StaticForm.Designer.cs">
+      <DependentUpon>StaticForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Pictures.cs">
       <SubType>Form</SubType>
@@ -267,6 +292,9 @@
     <EmbeddedResource Include="NovelTest\AddBlackWord.resx">
       <DependentUpon>AddBlackWord.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="NovelTest\BaseForm.resx">
+      <DependentUpon>BaseForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="NovelTest\BlackWords.resx">
       <DependentUpon>BlackWords.cs</DependentUpon>
     </EmbeddedResource>
@@ -279,11 +307,20 @@
     <EmbeddedResource Include="NovelTest\ModifyBlackWords.resx">
       <DependentUpon>ModifyBlackWords.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="NovelTest\ProgressForm.resx">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="NovelTest\ReadNovel.resx">
       <DependentUpon>ReadNovel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NovelTest\Search.resx">
       <DependentUpon>Search.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NovelTest\Settings.resx">
+      <DependentUpon>Settings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NovelTest\StaticForm.resx">
+      <DependentUpon>StaticForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pictures.resx">
       <DependentUpon>Pictures.cs</DependentUpon>

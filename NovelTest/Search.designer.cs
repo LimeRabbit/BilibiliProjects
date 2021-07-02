@@ -53,14 +53,15 @@ namespace BilibiliProjects.NovelTest
             this.comboBox_Source = new System.Windows.Forms.ComboBox();
             this.label_state = new System.Windows.Forms.Label();
             this.button_chapter = new System.Windows.Forms.Button();
-            this.checkBox_night_mode = new System.Windows.Forms.CheckBox();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(294, 19);
+            this.label1.BackColor = System.Drawing.SystemColors.Control;
+            this.label1.ForeColor = System.Drawing.Color.Black;
+            this.label1.Location = new System.Drawing.Point(294, 34);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(83, 12);
             this.label1.TabIndex = 0;
@@ -68,7 +69,9 @@ namespace BilibiliProjects.NovelTest
             // 
             // textBox_keyword
             // 
-            this.textBox_keyword.Location = new System.Drawing.Point(383, 15);
+            this.textBox_keyword.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox_keyword.ForeColor = System.Drawing.Color.Black;
+            this.textBox_keyword.Location = new System.Drawing.Point(383, 30);
             this.textBox_keyword.Name = "textBox_keyword";
             this.textBox_keyword.Size = new System.Drawing.Size(200, 21);
             this.textBox_keyword.TabIndex = 1;
@@ -81,7 +84,7 @@ namespace BilibiliProjects.NovelTest
             this.button_ok.FlatAppearance.BorderSize = 0;
             this.button_ok.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_ok.ForeColor = System.Drawing.Color.White;
-            this.button_ok.Location = new System.Drawing.Point(589, 14);
+            this.button_ok.Location = new System.Drawing.Point(589, 29);
             this.button_ok.Name = "button_ok";
             this.button_ok.Size = new System.Drawing.Size(50, 23);
             this.button_ok.TabIndex = 2;
@@ -93,6 +96,7 @@ namespace BilibiliProjects.NovelTest
             // 
             this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.listView1.BackColor = System.Drawing.SystemColors.Control;
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.column_name,
             this.column_state,
@@ -100,11 +104,12 @@ namespace BilibiliProjects.NovelTest
             this.columnHeader3,
             this.columnHeader4});
             this.listView1.ContextMenuStrip = this.contextMenuStrip1;
+            this.listView1.ForeColor = System.Drawing.Color.Black;
             this.listView1.FullRowSelect = true;
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(23, 42);
+            this.listView1.Location = new System.Drawing.Point(23, 58);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(1049, 693);
+            this.listView1.Size = new System.Drawing.Size(1049, 677);
             this.listView1.TabIndex = 3;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -141,6 +146,7 @@ namespace BilibiliProjects.NovelTest
             this.章节列表ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(125, 48);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // 开始阅读ToolStripMenuItem
             // 
@@ -160,14 +166,16 @@ namespace BilibiliProjects.NovelTest
             // 
             this.listView2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.listView2.BackColor = System.Drawing.SystemColors.Control;
             this.listView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
+            this.listView2.ForeColor = System.Drawing.Color.Black;
             this.listView2.FullRowSelect = true;
             this.listView2.HideSelection = false;
-            this.listView2.Location = new System.Drawing.Point(1091, 42);
+            this.listView2.Location = new System.Drawing.Point(1091, 58);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(470, 693);
+            this.listView2.Size = new System.Drawing.Size(470, 677);
             this.listView2.TabIndex = 5;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
@@ -191,7 +199,7 @@ namespace BilibiliProjects.NovelTest
             this.button_hideChapter.FlatAppearance.BorderSize = 0;
             this.button_hideChapter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_hideChapter.ForeColor = System.Drawing.Color.White;
-            this.button_hideChapter.Location = new System.Drawing.Point(1091, 14);
+            this.button_hideChapter.Location = new System.Drawing.Point(1091, 29);
             this.button_hideChapter.Name = "button_hideChapter";
             this.button_hideChapter.Size = new System.Drawing.Size(93, 23);
             this.button_hideChapter.TabIndex = 6;
@@ -202,7 +210,9 @@ namespace BilibiliProjects.NovelTest
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(1297, 19);
+            this.label2.BackColor = System.Drawing.SystemColors.Control;
+            this.label2.ForeColor = System.Drawing.Color.Black;
+            this.label2.Location = new System.Drawing.Point(1296, 34);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(65, 12);
             this.label2.TabIndex = 7;
@@ -210,7 +220,9 @@ namespace BilibiliProjects.NovelTest
             // 
             // textBox_chapter
             // 
-            this.textBox_chapter.Location = new System.Drawing.Point(1368, 15);
+            this.textBox_chapter.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox_chapter.ForeColor = System.Drawing.Color.Black;
+            this.textBox_chapter.Location = new System.Drawing.Point(1367, 30);
             this.textBox_chapter.Name = "textBox_chapter";
             this.textBox_chapter.Size = new System.Drawing.Size(193, 21);
             this.textBox_chapter.TabIndex = 8;
@@ -223,7 +235,7 @@ namespace BilibiliProjects.NovelTest
             this.button_mybooks.FlatAppearance.BorderSize = 0;
             this.button_mybooks.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_mybooks.ForeColor = System.Drawing.Color.White;
-            this.button_mybooks.Location = new System.Drawing.Point(997, 14);
+            this.button_mybooks.Location = new System.Drawing.Point(997, 29);
             this.button_mybooks.Name = "button_mybooks";
             this.button_mybooks.Size = new System.Drawing.Size(75, 23);
             this.button_mybooks.TabIndex = 9;
@@ -234,7 +246,9 @@ namespace BilibiliProjects.NovelTest
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(21, 19);
+            this.label3.BackColor = System.Drawing.SystemColors.Control;
+            this.label3.ForeColor = System.Drawing.Color.Black;
+            this.label3.Location = new System.Drawing.Point(21, 34);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(53, 12);
             this.label3.TabIndex = 10;
@@ -242,7 +256,9 @@ namespace BilibiliProjects.NovelTest
             // 
             // comboBox_Source
             // 
+            this.comboBox_Source.BackColor = System.Drawing.SystemColors.Control;
             this.comboBox_Source.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_Source.ForeColor = System.Drawing.Color.Black;
             this.comboBox_Source.FormattingEnabled = true;
             this.comboBox_Source.Items.AddRange(new object[] {
             "31小说",
@@ -250,7 +266,7 @@ namespace BilibiliProjects.NovelTest
             "棉花糖小说",
             "天域小说",
             "56书库"});
-            this.comboBox_Source.Location = new System.Drawing.Point(80, 15);
+            this.comboBox_Source.Location = new System.Drawing.Point(80, 30);
             this.comboBox_Source.Name = "comboBox_Source";
             this.comboBox_Source.Size = new System.Drawing.Size(185, 20);
             this.comboBox_Source.TabIndex = 11;
@@ -259,8 +275,10 @@ namespace BilibiliProjects.NovelTest
             // label_state
             // 
             this.label_state.AutoSize = true;
+            this.label_state.BackColor = System.Drawing.SystemColors.Control;
             this.label_state.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label_state.Location = new System.Drawing.Point(645, 19);
+            this.label_state.ForeColor = System.Drawing.Color.Black;
+            this.label_state.Location = new System.Drawing.Point(645, 34);
             this.label_state.Name = "label_state";
             this.label_state.Size = new System.Drawing.Size(0, 12);
             this.label_state.TabIndex = 12;
@@ -272,7 +290,7 @@ namespace BilibiliProjects.NovelTest
             this.button_chapter.FlatAppearance.BorderSize = 0;
             this.button_chapter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_chapter.ForeColor = System.Drawing.Color.White;
-            this.button_chapter.Location = new System.Drawing.Point(916, 14);
+            this.button_chapter.Location = new System.Drawing.Point(916, 29);
             this.button_chapter.Name = "button_chapter";
             this.button_chapter.Size = new System.Drawing.Size(75, 23);
             this.button_chapter.TabIndex = 13;
@@ -280,24 +298,11 @@ namespace BilibiliProjects.NovelTest
             this.button_chapter.UseVisualStyleBackColor = false;
             this.button_chapter.Click += new System.EventHandler(this.button_chapter_Click);
             // 
-            // checkBox_night_mode
-            // 
-            this.checkBox_night_mode.AutoSize = true;
-            this.checkBox_night_mode.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox_night_mode.Location = new System.Drawing.Point(838, 17);
-            this.checkBox_night_mode.Name = "checkBox_night_mode";
-            this.checkBox_night_mode.Size = new System.Drawing.Size(72, 16);
-            this.checkBox_night_mode.TabIndex = 20;
-            this.checkBox_night_mode.Text = "夜间模式";
-            this.checkBox_night_mode.UseVisualStyleBackColor = false;
-            this.checkBox_night_mode.CheckedChanged += new System.EventHandler(this.checkBox_night_mode_CheckedChanged);
-            // 
             // Search
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1574, 747);
-            this.Controls.Add(this.checkBox_night_mode);
             this.Controls.Add(this.button_chapter);
             this.Controls.Add(this.label_state);
             this.Controls.Add(this.comboBox_Source);
@@ -312,8 +317,21 @@ namespace BilibiliProjects.NovelTest
             this.Controls.Add(this.textBox_keyword);
             this.Controls.Add(this.label1);
             this.Name = "Search";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "搜索小说";
+            this.VisibleChanged += new System.EventHandler(this.Search_VisibleChanged);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.textBox_keyword, 0);
+            this.Controls.SetChildIndex(this.button_ok, 0);
+            this.Controls.SetChildIndex(this.listView1, 0);
+            this.Controls.SetChildIndex(this.listView2, 0);
+            this.Controls.SetChildIndex(this.button_hideChapter, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.textBox_chapter, 0);
+            this.Controls.SetChildIndex(this.button_mybooks, 0);
+            this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.comboBox_Source, 0);
+            this.Controls.SetChildIndex(this.label_state, 0);
+            this.Controls.SetChildIndex(this.button_chapter, 0);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -345,6 +363,5 @@ namespace BilibiliProjects.NovelTest
         private System.Windows.Forms.ComboBox comboBox_Source;
         private System.Windows.Forms.Label label_state;
         private System.Windows.Forms.Button button_chapter;
-        private System.Windows.Forms.CheckBox checkBox_night_mode;
     }
 }

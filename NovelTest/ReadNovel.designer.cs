@@ -31,26 +31,19 @@ namespace BilibiliProjects.NovelTest
         {
             this.components = new System.ComponentModel.Container();
             this.button1 = new System.Windows.Forms.Button();
-            this.textBox_page = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.屏蔽选中词语ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.替换为ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button_pre = new System.Windows.Forms.Button();
             this.button_next = new System.Windows.Forms.Button();
-            this.label_book = new System.Windows.Forms.Label();
             this.label_source = new System.Windows.Forms.Label();
             this.button_chapters = new System.Windows.Forms.Button();
             this.button_words = new System.Windows.Forms.Button();
-            this.label_scale = new System.Windows.Forms.Label();
-            this.trackBar_scale = new System.Windows.Forms.TrackBar();
-            this.checkBox_compress = new System.Windows.Forms.CheckBox();
             this.button_save = new System.Windows.Forms.Button();
-            this.checkBox_autosave = new System.Windows.Forms.CheckBox();
-            this.checkBox_night_mode = new System.Windows.Forms.CheckBox();
+            this.linkLabel_copy = new System.Windows.Forms.LinkLabel();
+            this.label_pagesite = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -60,7 +53,7 @@ namespace BilibiliProjects.NovelTest
             this.button1.FlatAppearance.BorderSize = 0;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(273, 36);
+            this.button1.Location = new System.Drawing.Point(90, 61);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
@@ -68,37 +61,19 @@ namespace BilibiliProjects.NovelTest
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.ButtonRefresh_Click);
             // 
-            // textBox_page
-            // 
-            this.textBox_page.Location = new System.Drawing.Point(72, 36);
-            this.textBox_page.Name = "textBox_page";
-            this.textBox_page.ReadOnly = true;
-            this.textBox_page.Size = new System.Drawing.Size(195, 21);
-            this.textBox_page.TabIndex = 4;
-            this.textBox_page.Text = "3/3734/6857780";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(25, 41);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 12);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "当前页";
-            // 
             // richTextBox1
             // 
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox1.BackColor = System.Drawing.SystemColors.Control;
             this.richTextBox1.ContextMenuStrip = this.contextMenuStrip1;
             this.richTextBox1.Font = new System.Drawing.Font("宋体", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.richTextBox1.ForeColor = System.Drawing.Color.Blue;
-            this.richTextBox1.Location = new System.Drawing.Point(14, 100);
+            this.richTextBox1.ForeColor = System.Drawing.Color.Black;
+            this.richTextBox1.Location = new System.Drawing.Point(12, 96);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(875, 581);
+            this.richTextBox1.Size = new System.Drawing.Size(880, 603);
             this.richTextBox1.TabIndex = 5;
             this.richTextBox1.Text = "";
             // 
@@ -132,7 +107,7 @@ namespace BilibiliProjects.NovelTest
             this.button_pre.FlatAppearance.BorderSize = 0;
             this.button_pre.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_pre.ForeColor = System.Drawing.Color.White;
-            this.button_pre.Location = new System.Drawing.Point(387, 36);
+            this.button_pre.Location = new System.Drawing.Point(15, 61);
             this.button_pre.Name = "button_pre";
             this.button_pre.Size = new System.Drawing.Size(69, 23);
             this.button_pre.TabIndex = 6;
@@ -147,7 +122,7 @@ namespace BilibiliProjects.NovelTest
             this.button_next.FlatAppearance.BorderSize = 0;
             this.button_next.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_next.ForeColor = System.Drawing.Color.White;
-            this.button_next.Location = new System.Drawing.Point(462, 36);
+            this.button_next.Location = new System.Drawing.Point(171, 61);
             this.button_next.Name = "button_next";
             this.button_next.Size = new System.Drawing.Size(69, 23);
             this.button_next.TabIndex = 7;
@@ -155,26 +130,17 @@ namespace BilibiliProjects.NovelTest
             this.button_next.UseVisualStyleBackColor = false;
             this.button_next.Click += new System.EventHandler(this.button_next_Click);
             // 
-            // label_book
-            // 
-            this.label_book.AutoSize = true;
-            this.label_book.BackColor = System.Drawing.Color.Transparent;
-            this.label_book.Font = new System.Drawing.Font("宋体", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label_book.Location = new System.Drawing.Point(12, 65);
-            this.label_book.Name = "label_book";
-            this.label_book.Size = new System.Drawing.Size(97, 15);
-            this.label_book.TabIndex = 10;
-            this.label_book.Text = "label_book";
-            // 
             // label_source
             // 
             this.label_source.AutoSize = true;
-            this.label_source.BackColor = System.Drawing.Color.Transparent;
-            this.label_source.Location = new System.Drawing.Point(13, 20);
+            this.label_source.BackColor = System.Drawing.SystemColors.Control;
+            this.label_source.ForeColor = System.Drawing.Color.Black;
+            this.label_source.Location = new System.Drawing.Point(13, 35);
             this.label_source.Name = "label_source";
             this.label_source.Size = new System.Drawing.Size(53, 12);
             this.label_source.TabIndex = 11;
-            this.label_source.Text = "当前来源";
+            this.label_source.Text = "当前页面";
+            this.label_source.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // button_chapters
             // 
@@ -183,7 +149,7 @@ namespace BilibiliProjects.NovelTest
             this.button_chapters.FlatAppearance.BorderSize = 0;
             this.button_chapters.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_chapters.ForeColor = System.Drawing.Color.White;
-            this.button_chapters.Location = new System.Drawing.Point(539, 36);
+            this.button_chapters.Location = new System.Drawing.Point(246, 61);
             this.button_chapters.Name = "button_chapters";
             this.button_chapters.Size = new System.Drawing.Size(84, 23);
             this.button_chapters.TabIndex = 12;
@@ -193,12 +159,13 @@ namespace BilibiliProjects.NovelTest
             // 
             // button_words
             // 
+            this.button_words.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button_words.BackColor = System.Drawing.Color.Navy;
             this.button_words.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button_words.FlatAppearance.BorderSize = 0;
             this.button_words.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_words.ForeColor = System.Drawing.Color.White;
-            this.button_words.Location = new System.Drawing.Point(629, 36);
+            this.button_words.Location = new System.Drawing.Point(814, 61);
             this.button_words.Name = "button_words";
             this.button_words.Size = new System.Drawing.Size(75, 23);
             this.button_words.TabIndex = 13;
@@ -206,51 +173,15 @@ namespace BilibiliProjects.NovelTest
             this.button_words.UseVisualStyleBackColor = false;
             this.button_words.Click += new System.EventHandler(this.button_words_Click);
             // 
-            // label_scale
-            // 
-            this.label_scale.AutoSize = true;
-            this.label_scale.BackColor = System.Drawing.Color.Transparent;
-            this.label_scale.Location = new System.Drawing.Point(385, 12);
-            this.label_scale.Name = "label_scale";
-            this.label_scale.Size = new System.Drawing.Size(59, 12);
-            this.label_scale.TabIndex = 14;
-            this.label_scale.Text = "缩放：1倍";
-            // 
-            // trackBar_scale
-            // 
-            this.trackBar_scale.AutoSize = false;
-            this.trackBar_scale.Location = new System.Drawing.Point(462, 6);
-            this.trackBar_scale.Maximum = 30;
-            this.trackBar_scale.Minimum = 10;
-            this.trackBar_scale.Name = "trackBar_scale";
-            this.trackBar_scale.Size = new System.Drawing.Size(233, 24);
-            this.trackBar_scale.TabIndex = 15;
-            this.trackBar_scale.TickFrequency = 2;
-            this.trackBar_scale.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBar_scale.Value = 20;
-            this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar_scale_Scroll);
-            // 
-            // checkBox_compress
-            // 
-            this.checkBox_compress.AutoSize = true;
-            this.checkBox_compress.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox_compress.Checked = true;
-            this.checkBox_compress.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_compress.Location = new System.Drawing.Point(539, 67);
-            this.checkBox_compress.Name = "checkBox_compress";
-            this.checkBox_compress.Size = new System.Drawing.Size(84, 16);
-            this.checkBox_compress.TabIndex = 16;
-            this.checkBox_compress.Text = "保存时压缩";
-            this.checkBox_compress.UseVisualStyleBackColor = false;
-            // 
             // button_save
             // 
+            this.button_save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button_save.BackColor = System.Drawing.Color.Navy;
             this.button_save.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button_save.FlatAppearance.BorderSize = 0;
             this.button_save.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_save.ForeColor = System.Drawing.Color.White;
-            this.button_save.Location = new System.Drawing.Point(629, 63);
+            this.button_save.Location = new System.Drawing.Point(733, 61);
             this.button_save.Name = "button_save";
             this.button_save.Size = new System.Drawing.Size(75, 23);
             this.button_save.TabIndex = 17;
@@ -258,57 +189,64 @@ namespace BilibiliProjects.NovelTest
             this.button_save.UseVisualStyleBackColor = false;
             this.button_save.Click += new System.EventHandler(this.Button_save_Click);
             // 
-            // checkBox_autosave
+            // linkLabel_copy
             // 
-            this.checkBox_autosave.AutoSize = true;
-            this.checkBox_autosave.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox_autosave.Location = new System.Drawing.Point(462, 67);
-            this.checkBox_autosave.Name = "checkBox_autosave";
-            this.checkBox_autosave.Size = new System.Drawing.Size(72, 16);
-            this.checkBox_autosave.TabIndex = 18;
-            this.checkBox_autosave.Text = "自动保存";
-            this.checkBox_autosave.UseVisualStyleBackColor = false;
+            this.linkLabel_copy.AutoSize = true;
+            this.linkLabel_copy.BackColor = System.Drawing.SystemColors.Control;
+            this.linkLabel_copy.Font = new System.Drawing.Font("宋体", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.linkLabel_copy.ForeColor = System.Drawing.Color.Black;
+            this.linkLabel_copy.LinkColor = System.Drawing.Color.Blue;
+            this.linkLabel_copy.Location = new System.Drawing.Point(130, 34);
+            this.linkLabel_copy.Name = "linkLabel_copy";
+            this.linkLabel_copy.Size = new System.Drawing.Size(35, 14);
+            this.linkLabel_copy.TabIndex = 20;
+            this.linkLabel_copy.TabStop = true;
+            this.linkLabel_copy.Text = "复制";
+            this.linkLabel_copy.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_copy_LinkClicked);
             // 
-            // checkBox_night_mode
+            // label_pagesite
             // 
-            this.checkBox_night_mode.AutoSize = true;
-            this.checkBox_night_mode.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox_night_mode.Location = new System.Drawing.Point(711, 8);
-            this.checkBox_night_mode.Name = "checkBox_night_mode";
-            this.checkBox_night_mode.Size = new System.Drawing.Size(72, 16);
-            this.checkBox_night_mode.TabIndex = 19;
-            this.checkBox_night_mode.Text = "夜间模式";
-            this.checkBox_night_mode.UseVisualStyleBackColor = false;
-            this.checkBox_night_mode.CheckedChanged += new System.EventHandler(this.checkBox_night_mode_CheckedChanged);
+            this.label_pagesite.AutoSize = true;
+            this.label_pagesite.BackColor = System.Drawing.SystemColors.Control;
+            this.label_pagesite.ForeColor = System.Drawing.Color.Black;
+            this.label_pagesite.Location = new System.Drawing.Point(72, 35);
+            this.label_pagesite.Name = "label_pagesite";
+            this.label_pagesite.Size = new System.Drawing.Size(53, 12);
+            this.label_pagesite.TabIndex = 21;
+            this.label_pagesite.Text = "小说网址";
+            this.label_pagesite.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ReadNovel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(901, 693);
-            this.Controls.Add(this.checkBox_night_mode);
-            this.Controls.Add(this.checkBox_autosave);
+            this.ClientSize = new System.Drawing.Size(904, 711);
+            this.Controls.Add(this.label_pagesite);
+            this.Controls.Add(this.linkLabel_copy);
             this.Controls.Add(this.button_save);
-            this.Controls.Add(this.checkBox_compress);
-            this.Controls.Add(this.trackBar_scale);
-            this.Controls.Add(this.label_scale);
             this.Controls.Add(this.button_words);
             this.Controls.Add(this.button_chapters);
             this.Controls.Add(this.label_source);
-            this.Controls.Add(this.label_book);
             this.Controls.Add(this.button_next);
             this.Controls.Add(this.button_pre);
             this.Controls.Add(this.richTextBox1);
-            this.Controls.Add(this.textBox_page);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.button1);
+            this.MinimumSize = new System.Drawing.Size(920, 750);
             this.Name = "ReadNovel";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "看小说";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.ReadNovel_Load);
+            this.Controls.SetChildIndex(this.button1, 0);
+            this.Controls.SetChildIndex(this.richTextBox1, 0);
+            this.Controls.SetChildIndex(this.button_pre, 0);
+            this.Controls.SetChildIndex(this.button_next, 0);
+            this.Controls.SetChildIndex(this.label_source, 0);
+            this.Controls.SetChildIndex(this.button_chapters, 0);
+            this.Controls.SetChildIndex(this.button_words, 0);
+            this.Controls.SetChildIndex(this.button_save, 0);
+            this.Controls.SetChildIndex(this.linkLabel_copy, 0);
+            this.Controls.SetChildIndex(this.label_pagesite, 0);
             this.contextMenuStrip1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -317,24 +255,18 @@ namespace BilibiliProjects.NovelTest
         #endregion
 
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox_page;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button button_pre;
         private System.Windows.Forms.Button button_next;
-        private System.Windows.Forms.Label label_book;
         private System.Windows.Forms.Label label_source;
         private System.Windows.Forms.Button button_chapters;
         private System.Windows.Forms.Button button_words;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 屏蔽选中词语ToolStripMenuItem;
-        private System.Windows.Forms.TrackBar trackBar_scale;
         private System.Windows.Forms.ToolStripMenuItem 替换为ToolStripMenuItem;
-        private System.Windows.Forms.Label label_scale;
-        private System.Windows.Forms.CheckBox checkBox_compress;
         private System.Windows.Forms.Button button_save;
-        private System.Windows.Forms.CheckBox checkBox_autosave;
-        private System.Windows.Forms.CheckBox checkBox_night_mode;
+        private System.Windows.Forms.LinkLabel linkLabel_copy;
+        private System.Windows.Forms.Label label_pagesite;
     }
 }
 

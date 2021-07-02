@@ -10,29 +10,30 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;                                                                                                    
-using System.Threading.Tasks;
+
 using System.Windows.Forms;
 using System.Data.SQLite;
 using BilibiliProjects;
 
 namespace BilibiliProjects.NovelTest
 {
-    public partial class ReadNovel : Form
+    public partial class ReadNovel : BaseForm
     {
         Tools tools;
         string site = "m.31xs.com/";  //网站
-        string url = "";
         string preview_page, next_page, index_page; //上一页，下一页，索引页(目录页)
         string novelName, readtitle;  //书名，章节名
         private const int GetContentCode = 0;
         List<BlackWord> blackWords;  //要屏蔽和替换的词
         List<Chapter> chapters;  //当前阅读小说的所有本地章节
+        Record record;  //阅读记录，屏蔽词语记录
+        DateTime time_start;
         //需要传章节地址
         public ReadNovel(string address,string novelName)
         {
             InitializeComponent();
             this.novelName = novelName;
-            textBox_page.Text = address;
+            page = address;
             Init();
         }
         private void ReadNovel_Load(object sender, EventArgs e)
@@ -43,15 +44,21 @@ namespace BilibiliProjects.NovelTest
         }
         void Init()
         {
-            UIColors.SetControlColors(this);
-            checkBox_night_mode.Checked = UIColors.IsNightMode;
+            time_start = DateTime.Now;
             site = Tools.source.Site;
-            label_source.Text = "当前来源：" + site;
+            label_pagesite.Text = GetCurrentSite();
+            linkLabel_copy.Left = label_pagesite.Right + 5;
+            richTextBox1.Font = Setting.Font;
             tools = new Tools();
             tools.HTMLGetCompleted += Tools_HTMLGetCompleted;
+            GetRecord();
             GetChapters(Tools.source.ID, novelName);
             GetBlackWords();
             GetContent();
+        }
+        string GetCurrentSite()
+        {
+            return site.TrimEnd('/') + "/" + page.TrimStart('/');
         }
 
         /// <summary>
@@ -71,14 +78,13 @@ namespace BilibiliProjects.NovelTest
                 string type = table.Rows[i][2].ToString().Trim();
                 word1.word = word;
                 word1.type = type;
-                word1.instead = instead;
+                word1.replacement = instead;
                 blackWords.Add(word1);
             }
         }
 
         private void Tools_HTMLGetCompleted(WebResponseInfo responseInfo, int requestCode)
         {
-            url = responseInfo.URL;
             if (InvokeRequired)
             {
                 BeginInvoke(new Action(delegate  //跨线程操作控件，需要Invoke
@@ -102,7 +108,6 @@ namespace BilibiliProjects.NovelTest
             if (errorMsg != null)
             {
                 richTextBox1.Text = errorMsg;
-                label_book.Text = "";
             }
             else
             {
@@ -120,19 +125,19 @@ namespace BilibiliProjects.NovelTest
                         richTextBox1.AppendText(s); //追加内容
                         if (hasNextPage)  //如果小说内容也分页的话
                         {
-                            label_book.Text = "获取中：" + next_page;
                             string url = GetContentPage(next_page); //章节页面地址
                             tools.GetHtmlByThread(url, GetContentCode);
                         }
                         else  //本章获取完毕
                         {
-                            label_book.Text = "《" + novelName + "》 " + readtitle;
+                            label_pagesite.Text = GetCurrentSite();
+                            Text = "《" + novelName + "》 " + readtitle;
                             richTextBox1.Focus();
                             richTextBox1.SelectionStart = 0;
                             //将当期页的信息存入数据库
                             Chapter chapter = new Chapter(novelName, readtitle, page);
                             UpdateData(chapter);
-                            if(checkBox_autosave.Checked)  //自动保存到本地
+                            if(Setting.AutoSave)  //自动保存到本地
                             {
                                 Button_save_Click(null, null);
                             }
@@ -140,7 +145,6 @@ namespace BilibiliProjects.NovelTest
                         break;
                 }
             }
-            textBox_page.Enabled = true;
             button1.Enabled = true;
             button_next.Enabled = true;
             button_pre.Enabled = true;
@@ -153,6 +157,9 @@ namespace BilibiliProjects.NovelTest
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
+            DateTime time_end = DateTime.Now;
+            record.seconds += (int)(time_end - time_start).TotalSeconds;
+            SetRecordToDB();
             Search search = (Search)Application.OpenForms["Search"];
             search.Show();
         }
@@ -160,13 +167,13 @@ namespace BilibiliProjects.NovelTest
         //下一页
         private void button_next_Click(object sender, EventArgs e)
         {
-            textBox_page.Text = next_page;
+            page = next_page;
             GetContent();
         }
         //上一页
         private void button_pre_Click(object sender, EventArgs e)
         {
-            textBox_page.Text = preview_page;
+            page = preview_page;
             GetContent();
         }
         string page = "";  //小说地址，不含域名
@@ -176,12 +183,6 @@ namespace BilibiliProjects.NovelTest
         /// </summary>
         private void GetContent(bool forceRefresh=false)
         {
-            //章节页地址
-            page = textBox_page.Text.Trim();
-            //非空判断
-            if (string.IsNullOrEmpty(page))
-                return;
-
             //不是强制刷新，如果本地有文件，则读取
             if (!forceRefresh)
             {
@@ -189,10 +190,11 @@ namespace BilibiliProjects.NovelTest
                 if (tmpList.Count > 0)  //寻找一样的章节，根据网址寻找
                 {
                     string chapter1 = tmpList[0].chapter;
-                    string path = Application.StartupPath + "\\SavedNovels\\" + novelName + "\\" + chapter1 + ".novel";
+                    string path = tmpList[0].filename;
                     if (File.Exists(path))  //读取本地内容
                     {
-                        label_book.Text = "《" + novelName + "》 " + chapter1;
+                        label_pagesite.Text = GetCurrentSite();
+                        Text = "《" + novelName + "》 " + chapter1 + " [本地]";
                         richTextBox1.Focus();
                         richTextBox1.SelectionStart = 0;
                         //将当期页的信息存入数据库
@@ -208,23 +210,23 @@ namespace BilibiliProjects.NovelTest
                             preview_page = chapters[index - 1].site;
                         }
                         byte[] bytes = File.ReadAllBytes(path);
-                        string text = Compress.DecompressString(bytes);
-                        if (text != null)
+                        string text;
+                        if (tmpList[0].compressed)  //压缩
                         {
-                            richTextBox1.Text = text;
+                            text = Compress.DecompressString(bytes);
                         }
-                        else  //解压失败，有可能是未压缩，也有可能是数据损坏
+                        else  //没有压缩
                         {
-                            richTextBox1.Text = Encoding.UTF8.GetString(bytes);
+                            text = Encoding.UTF8.GetString(bytes);
                         }
+                        richTextBox1.Text = text;
                         return;
                     }
                 }
             }
 
+            Text = "章节内容获取中……";
             richTextBox1.Text = "";
-            label_book.Text = "获取中……";
-            textBox_page.Enabled = false;
             button1.Enabled = false;
             button_next.Enabled = false;
             button_pre.Enabled = false;
@@ -239,9 +241,10 @@ namespace BilibiliProjects.NovelTest
         //从章节列表过来，需要传地址。跳章功能
         public void setSite(string site)
         {
-            textBox_page.Text = site;
+            page = site;
             this.site = Tools.source.Site;
-            label_source.Text = "当前来源：" + this.site;
+            label_pagesite.Text = GetCurrentSite();
+            linkLabel_copy.Left = label_pagesite.Right + 5;
             GetContent();
         }
         //右键--屏蔽
@@ -264,7 +267,7 @@ namespace BilibiliProjects.NovelTest
             BlackWord word = new BlackWord();
             word.word = txt;
             word.type = type;
-            word.instead = "";
+            word.replacement = "";
             blackWords.Add(word);
         }
         //右键--替换为
@@ -275,7 +278,7 @@ namespace BilibiliProjects.NovelTest
             new AddBlackWord(txt).ShowDialog();
             GetBlackWords();
             string s = richTextBox1.Text;
-            richTextBox1.Text = InsteadWords(s);
+            richTextBox1.Text = ReplaceWords(s);
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
@@ -290,19 +293,13 @@ namespace BilibiliProjects.NovelTest
                 contextMenuStrip1.Items[0].Enabled = true;
                 contextMenuStrip1.Items[1].Enabled = true;
             }
+                UIColors.SetContextMenuColor(contextMenuStrip1);
         }
 
         private void button_words_Click(object sender, EventArgs e)
         {
             new BlackWords().ShowDialog(); //屏蔽词管理
             GetBlackWords();
-        }
-
-        private void trackBar_scale_Scroll(object sender, EventArgs e)
-        {
-            float f = trackBar_scale.Value / 10f;
-            label_scale.Text = "缩放：" + f + "倍";
-            richTextBox1.Font = new Font(Font.FontFamily, f*10);
         }
 
         string GetContentPage(string page)
@@ -424,7 +421,7 @@ namespace BilibiliProjects.NovelTest
                 s = s.Substring(0, i).Trim();
             //避免有形如 &#dddd; &#xdddd; 之类的字符串出现
             s = System.Web.HttpUtility.HtmlDecode(s);
-            s = InsteadWords(s);
+            s = ReplaceWords(s);
             return s.Trim();
         }
 
@@ -433,22 +430,36 @@ namespace BilibiliProjects.NovelTest
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        string InsteadWords(string s)
+        string ReplaceWords(string s)
         {
             foreach (BlackWord word in blackWords)
             {
-                if (word.type == "词语")
-                    s = s.Replace(word.word, word.instead);  //屏蔽词
-                else
-                    s = Regex.Replace(s, word.word, word.instead);  //屏蔽的正则表达式
+                if (word.type == "词语" && s.Contains(word.word))
+                {
+                    s = s.Replace(word.word, word.replacement);  //屏蔽词
+                    record.wordCount++;
+                }
+                else if (word.type == "正则表达式" && Regex.IsMatch(s, word.word))
+                {
+                    s = Regex.Replace(s, word.word, word.replacement);  //屏蔽的正则表达式
+                    record.regexCount++;
+                }
             }
             return s;
         }
 
-        private void checkBox_night_mode_CheckedChanged(object sender, EventArgs e)
+        /// <summary>
+        /// 重写父类的方法，设置窗体关闭之后的动作
+        /// </summary>
+        public override void AfterSetting()
         {
-            UIColors.SetNightMode(checkBox_night_mode.Checked);
-            UIColors.SetControlColors(this);
+            richTextBox1.Font = Setting.Font;
+        }
+
+        private void linkLabel_copy_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            string s = label_pagesite.Text;
+            Clipboard.SetText(s);
         }
 
         /// <summary>
@@ -477,18 +488,44 @@ namespace BilibiliProjects.NovelTest
         {
             string s = richTextBox1.Text;
             byte[] bytes;
-            if(checkBox_compress.Checked)
+            if(Setting.IsCompress)
             {
-                bytes = Compress.CompressString(s);
+                bytes = Compress.CompressString(s); //压缩
             }
             else
             {
-                bytes = Encoding.UTF8.GetBytes(s);
+                bytes = Encoding.UTF8.GetBytes(s);  //不压缩
             }
-            string path = Application.StartupPath + "\\SavedNovels\\" + novelName;
+            string path = "SavedNovels\\" + novelName;
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
-            File.WriteAllBytes(path + "\\" + readtitle + ".novel", bytes);
+            //文件名中不能含有以下字符： \/:*?"<>|
+            string filename = Regex.Replace(readtitle, "[\\|\\/|\\:|\\*|\\?|\"|\\<|\\>|\\|]", "");
+            path += "\\" + filename + ".novel";
+            try
+            {
+                File.WriteAllBytes(path, bytes);
+                string sql = "update chapters set filename=@path,compressed=@compress where site=@site";
+                List<SQLiteParameter> parameters = new List<SQLiteParameter>();
+                parameters.Add(new SQLiteParameter("path", path));
+                parameters.Add(new SQLiteParameter("compress", Setting.IsCompress));
+                parameters.Add(new SQLiteParameter("site", page));
+                MySqlite.ExecSql(sql,parameters);
+                List<Chapter> tmpList = chapters.Where(c => c.site == page).ToList();
+                if(tmpList.Count>0)
+                {
+                    tmpList[0].filename = path;
+                    tmpList[0].compressed= Setting.IsCompress;
+                }
+                Text = "《" + novelName + "》 " + readtitle + " [已保存]";
+                if (sender != null)
+                {
+                    MessageBox.Show("已保存至\n" + path, "提示");
+                }
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>
@@ -511,16 +548,66 @@ namespace BilibiliProjects.NovelTest
                 chapter.chapter = table.Rows[i][1].ToString();
                 chapter.web = Convert.ToInt32(table.Rows[i][2].ToString());
                 chapter.site = table.Rows[i][3].ToString();
+                chapter.filename = table.Rows[i][4].ToString();
+                chapter.compressed = table.Rows[i][5].ToString() != "0";
                 chapters.Add(chapter);
             }
+        }
+        bool hasToday = true;  //record表中是否有今天的记录
+        /// <summary>
+        /// 获取记录
+        /// </summary>
+        void GetRecord()
+        {
+            record = new Record();
+            string sql = "select * from record where date='"+DateTime.Now.ToString("yyyy-MM-dd")+"'";
+            DataTable dt = MySqlite.GetData(sql);
+            record.date = DateTime.Now.ToString("yyyy-MM-dd");
+            if (dt.Rows.Count==0)
+            {
+                hasToday = false;
+                record.wordCount = 0;
+                record.regexCount = 0;
+                record.seconds = 0;
+            }
+            else
+            {
+                hasToday = true;
+                record.wordCount = Convert.ToInt32(dt.Rows[0][1]);
+                record.regexCount = Convert.ToInt32(dt.Rows[0][2]);
+                record.seconds = Convert.ToInt32(dt.Rows[0][3]);
+            }
+            
+        }
+        /// <summary>
+        /// 写数据库
+        /// </summary>
+        void SetRecordToDB()
+        {
+            string sql;
+            List<SQLiteParameter> parameters = new List<SQLiteParameter>();
+            if(hasToday)
+            {
+                sql = "update record set wordCount=@word,regexCount=@regex,readSeconds=@read where date=@date";
+            }
+            else
+            {
+                sql = "insert into record values(@date,@word,@regex,@read)";
+            }
+            parameters.Add(new SQLiteParameter("date", DateTime.Now.ToString("yyyy-MM-dd")));
+            parameters.Add(new SQLiteParameter("word", record.wordCount));
+            parameters.Add(new SQLiteParameter("regex", record.regexCount));
+            parameters.Add(new SQLiteParameter("read", record.seconds));
+            MySqlite.ExecSql(sql, parameters);
         }
     }
     class BlackWord
     {
         public BlackWord() { }
         public string word;
-        public string instead;
+        public string replacement;
         public string type;
         public string date;
     }
+    
 }

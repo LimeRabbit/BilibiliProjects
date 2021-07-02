@@ -7,33 +7,42 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+
 using System.Windows.Forms;
 
 namespace BilibiliProjects.NovelTest
 {
-    public partial class ChaptersList : Form
+    public partial class ChaptersList : BaseForm
     {
         string novel;//小说名
         bool all; //是否显示所有小说的章节
+        DataTable dt_source;  //小说来源
         public ChaptersList(string novel,bool all)
         {
             InitializeComponent();
+            UIColors.SetControlColors(this);
             this.all = all;
             label_novel.Text = novel;
             this.novel = novel;
-            GetChapterCount();
+            GetBookShelf(); //获取书架上的记录
+            GetChapterCount();  //获取小说来源和章节数
             if (all)
             {
-                label_novel.Text = itemsLv1[0].SubItems[0].Text;
-                this.novel = itemsLv1[0].SubItems[0].Text;
+                if (itemsLv1.Count > 0)
+                {
+                    label_novel.Text = itemsLv1[0].SubItems[0].Text;
+                    this.novel = itemsLv1[0].SubItems[0].Text;
+                }
             }
             label_novel.Left = (Width - label_novel.Width) / 2;
             Thread t = new Thread(delegate()
             {
                 if (all)  //显示第一个小说的章节
                 {
-                    GetChapters(sourceIndex[0], itemsLv1[0].SubItems[0].Text);
+                    if (itemsLv1.Count > 0)
+                    {
+                        GetChapters(sourceIndex[0], itemsLv1[0].SubItems[0].Text);
+                    }
                 }
                 else  //显示指定小说的章节
                 {
@@ -87,6 +96,14 @@ namespace BilibiliProjects.NovelTest
             }
             listView1.Items.AddRange(itemsLv1.ToArray());
         }
+        /// <summary>
+        /// 获取书架上的记录
+        /// </summary>
+        void GetBookShelf()
+        {
+            string sql = "select novel,webIndex from bookshelf";
+            dt_source= MySqlite.GetData(sql);
+        }
         List<Chapter> chapters;
         List<ListViewItem> chapterItems;
         string chapterKeyword = "";
@@ -95,6 +112,7 @@ namespace BilibiliProjects.NovelTest
             //搜索章节
             chapterKeyword = textBox_chapter.Text.Trim();
             AddChaptersList();
+            if (chapters == null) return;
             //在List中寻找包含关键词的第一个项的索引
             int index = chapters.FindIndex(c => c.chapter.IndexOf(chapterKeyword) > -1);
             if (index > -1)
@@ -153,7 +171,7 @@ namespace BilibiliProjects.NovelTest
             }
             else
             {
-                e.Item.SubItems[0].ForeColor = Color.Black;
+                e.Item.SubItems[0].ForeColor = UIColors.ForeColor;
             }
         }
 
@@ -195,15 +213,32 @@ namespace BilibiliProjects.NovelTest
 
         private void button_clear_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("确定清空所有章节记录吗？", "提示", MessageBoxButtons.OKCancel);
+            DialogResult dr = MessageBox.Show("确定清空所有章节记录吗？\n注：已存在于书架上的不会被删除。", "提示", MessageBoxButtons.OKCancel);
             if (dr == DialogResult.OK)
             {
-                //书架上面的不删
-                string sql = "delete from chapters where novel not in (select distinct novel from bookshelf) or webindex not in(select distinct webindex from bookshelf) ";
-                MySqlite.ExecSql(sql);
+                for (int i = 0; i < itemsLv1.Count; i++)
+                {
+                    string name = novel;
+                    int webIndex = sourceIndex[i];
+                    if (all)
+                        name = itemsLv1[i].SubItems[0].Text;
+                    DataRow[] rows = dt_source.Select("novel='" + name + "' and webIndex=" + webIndex);
+                    if(rows.Length==0)
+                    {
+                        string sql = "delete from chapters where novel ='" + name + "' and webIndex=" + webIndex;
+                        MySqlite.ExecSql(sql);
+                    }
+                    
+                }
                 listView1.Items.Clear();  //不是虚拟模式，直接clear就好
                 listView2.VirtualListSize = 0;  //虚拟模式下，需要设置size才能清空
                 GetChapterCount();//重新获取
+                //默认选中第一个并获取所有章节
+                if (itemsLv1.Count > 0)
+                {
+                    listView1.Items[0].Selected = true;
+                    listView1_DoubleClick(null, null);
+                }
             }
         }
 
@@ -226,15 +261,24 @@ namespace BilibiliProjects.NovelTest
 
         private void button_delete_Click(object sender, EventArgs e)
         {
+            int index = listView1.SelectedIndices[0];
+            int source = sourceIndex[index];
+            for (int i = 0; i < dt_source.Rows.Count; i++)
+            {
+                if(novel==dt_source.Rows[i][0].ToString()&&source.ToString()==dt_source.Rows[i][1].ToString())
+                {
+                    MessageBox.Show("该小说和来源位于书架中，无法删除", "提示");
+                    return;
+                }
+            }
             DialogResult dr = MessageBox.Show("确定删除吗？", "提示", MessageBoxButtons.OKCancel);
             if (dr == DialogResult.OK)
             {
-                int index = listView1.SelectedIndices[0];
-                string sql = "delete from chapters where novel=@novel and webIndex=@web and novel not in (select distinct novel from bookshelf) or webindex not in(select distinct webindex from bookshelf) ";
+                string sql = "delete from chapters where novel=@novel and webIndex=@web";
                 List<SQLiteParameter> parameters = new List<SQLiteParameter>();
                 parameters.Add(new SQLiteParameter("novel", novel));
-                parameters.Add(new SQLiteParameter("web", sourceIndex[index]));
-                MySqlite.ExecSql(sql,parameters);
+                parameters.Add(new SQLiteParameter("web", source));
+                MySqlite.ExecSql(sql, parameters);
                 label_novel.Text = "章节管理";
                 label_novel.Left = (Width - label_novel.Width) / 2;
                 listView1_SelectedIndexChanged(null, null);

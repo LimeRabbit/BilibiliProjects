@@ -31,13 +31,13 @@ namespace BilibiliProjects.NovelTest
         {
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.button_add = new System.Windows.Forms.Button();
             this.button_del = new System.Windows.Forms.Button();
             this.button_upd = new System.Windows.Forms.Button();
             this.button_clr = new System.Windows.Forms.Button();
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // listView1
@@ -61,6 +61,11 @@ namespace BilibiliProjects.NovelTest
             // 
             this.columnHeader1.Text = "屏蔽词";
             this.columnHeader1.Width = 162;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "替换为...";
+            this.columnHeader4.Width = 110;
             // 
             // columnHeader2
             // 
@@ -133,11 +138,6 @@ namespace BilibiliProjects.NovelTest
             this.button_clr.Text = "清空所有词语";
             this.button_clr.UseVisualStyleBackColor = false;
             this.button_clr.Click += new System.EventHandler(this.button_clr_Click);
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "替换为...";
-            this.columnHeader4.Width = 110;
             // 
             // BlackWords
             // 

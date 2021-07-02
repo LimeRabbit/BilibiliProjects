@@ -6,13 +6,12 @@ using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;                                                                                                          
+using System.Text;                                                                                                        
 using System.Windows.Forms;
 
 namespace BilibiliProjects.NovelTest
 {
-    public partial class BookShelf : Form
+    public partial class BookShelf : BaseForm
     {
         Form form;
         bool userClose = true; //是否点击右上角的关闭按钮

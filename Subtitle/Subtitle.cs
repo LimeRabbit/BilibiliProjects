@@ -9,7 +9,7 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 using System.Windows.Forms;
 
 //将文本生成为png图片

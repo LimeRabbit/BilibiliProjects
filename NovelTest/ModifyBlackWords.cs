@@ -6,13 +6,14 @@ using System.Data.SQLite;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 using System.Windows.Forms;
 
 namespace BilibiliProjects.NovelTest
 {
     public partial class ModifyBlackWords : Form
     {
+        string type;
         public ModifyBlackWords(string word,string instead,string type)
         {
             InitializeComponent();
@@ -23,6 +24,7 @@ namespace BilibiliProjects.NovelTest
             textBox_desinstead.Text = instead;
             textBox_des.Focus();
             textBox_des.SelectAll();
+            this.type = type;
             if (type == "正则表达式")
                 radioButton2.Checked = true;
         }
@@ -32,8 +34,14 @@ namespace BilibiliProjects.NovelTest
             string s1 = textBox_source.Text.Trim();  //原屏蔽词
             string s2 = textBox_des.Text.Trim();  //新屏蔽词
             string s4 = textBox_desinstead.Text.Trim();  //新替换词
-            if (s1 == s2)
+            string type = "词语";
+            if (radioButton2.Checked)
+                type = "正则表达式";
+            if (s1 == s2 && type == this.type)
+            {
+                MessageBox.Show("已存在相同词汇","提示");
                 return;
+            }
 
             s1 = s1.Replace("'", "''");//单引号转义
             s2 = s2.Replace("'", "''");
@@ -48,11 +56,12 @@ namespace BilibiliProjects.NovelTest
                 return;
             }
 
-            sql = "update blackWords set words=@word,@instead=instead,date=@date where words=@oldword"; 
+            sql = "update blackWords set words=@word,@instead=instead,date=@date,type=@type where words=@oldword"; 
             parameters = new List<SQLiteParameter>();
             parameters.Add(new SQLiteParameter("word", s2));
             parameters.Add(new SQLiteParameter("instead", s4));
             parameters.Add(new SQLiteParameter("date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
+            parameters.Add(new SQLiteParameter("type", type));
             parameters.Add(new SQLiteParameter("oldword", s1));
             MySqlite.ExecSql(sql, parameters);
             Close();

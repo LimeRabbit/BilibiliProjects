@@ -10,7 +10,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
+
 using System.Windows.Forms;
 
 namespace BilibiliProjects
@@ -94,6 +94,7 @@ namespace BilibiliProjects
                     continue;
                 fonts.Add(family.Name);
             }
+            fonts.Reverse();
             return fonts;
         }
         //初始化时创建表
@@ -102,9 +103,13 @@ namespace BilibiliProjects
             //阅读记录
             string sql = "create table bookshelf(novel text,chapter text,webIndex text,site text,date text);";
             //章节列表
-            sql += "create table chapters(novel text,chapter text,webIndex text,site text);";
+            sql += "create table chapters(novel text,chapter text,webIndex text,site text,filename text,compressed real);";
             //关键字黑名单，如果章节中出现这些词，将会替换成空。词语，类型(词语/正则表达式)，添加时间
             sql += "create table blackWords(words text,insteadWords text,type text,date text);";
+            //屏蔽关键词的次数记录，以及阅读时间记录
+            sql += "create table record(date text,wordCount int,regexCount int,readSeconds int);";
+            //用户配置
+            sql += "create table settings(key text, value text);";
             MySqlite.ExecSql(sql);
         }
         /// <summary>  
@@ -498,5 +503,25 @@ namespace BilibiliProjects
         public string site;  //地址，不包含域名
         public int web;  //网站索引，这个是首页下拉框的索引
         public string lastDate;  //最后阅读时间
+        public string filename;  //保存到本地的文件名
+        public bool compressed;  //保存时是否压缩
+    }
+    public class Record
+    {
+        public Record() { }
+        public string date;
+        public int wordCount;
+        public int regexCount;
+        public int seconds;
+        public string ReadTime
+        {
+            get
+            {
+                int hour = seconds / 3600;
+                int minute = (seconds - hour * 3600) / 60;
+                int second = seconds % 60;
+                return hour + "时 " + minute + "分 " + second + "秒";
+            }
+        }
     }
 }

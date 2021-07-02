@@ -6,7 +6,6 @@ using System.Data.SQLite;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BilibiliProjects.NovelTest
@@ -31,6 +30,7 @@ namespace BilibiliProjects.NovelTest
             string txt = textBox1.Text.Trim();
             if(string.IsNullOrEmpty(txt))
             {
+                MessageBox.Show("屏蔽词不能为空，如果想屏蔽空白，请使用正则表达式","提示");
                 return;
             }
             txt = txt.Replace("'", "''"); //单引号转义

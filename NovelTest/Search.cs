@@ -10,13 +10,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
+
 using System.Web;
 using System.Windows.Forms;
 
 namespace BilibiliProjects.NovelTest
 {
-    public partial class Search : Form
+    public partial class Search : BaseForm
     {
         List<Novel> novels;  //搜索页的小说列表
         List<Chapter> chapters;  //章节列表
@@ -28,14 +28,13 @@ namespace BilibiliProjects.NovelTest
         public Search()
         {
             InitializeComponent();
+            Init();
+        }
+
+        void Init()
+        {
             Width = listView2.Left;
             comboBox_Source.SelectedIndex = 0;
-            MySqlite.InitDB();
-            if (!File.Exists(MySqlite.path))
-            {
-                Tools.CreateTable();  //不存在数据库，创建新表
-            }
-            UIColors.SetControlColors(this);
             webTools = new Tools();
             //网络请求结束的事件
             webTools.HTMLGetCompleted += Tools_HTMLGetCompleted;
@@ -87,6 +86,9 @@ namespace BilibiliProjects.NovelTest
             comboBox_Source.Enabled = true;
             button_ok.Enabled = true;
             button_mybooks.Enabled = true;
+            button_chapter.Enabled = true;
+            listView1.Enabled = true;
+            listView2.Enabled = true;
         }
 
         //按下回车键，搜索
@@ -116,6 +118,9 @@ namespace BilibiliProjects.NovelTest
             comboBox_Source.Enabled = false;
             button_ok.Enabled = false;
             button_mybooks.Enabled = false;
+            button_chapter.Enabled = false;
+            listView1.Enabled = false;
+            listView2.Enabled = false;
             listView1.Items.Clear();
             novels = new List<Novel>();
             //搜索的链接和参数
@@ -279,10 +284,11 @@ namespace BilibiliProjects.NovelTest
             chapterItems = new List<ListViewItem>();
             Novel novel = novels[index];
             //章节列表
-            string url = GetChapterLink(novel);
+            string url = GetChapterLink(novel, comboBox_Source.SelectedIndex);
             webTools.GetHtmlByThread(url, ChapterCode);
         }
 
+        ProgressForm p_form;
         List<string> allUrls;  //对于章节列表分页的网站，该变量储存每一页的页面链接
         int allUrlIndex = 1;  //当期访问的 allUrls 的索引
         private void GetChapterResult(string s,string url)
@@ -307,14 +313,12 @@ namespace BilibiliProjects.NovelTest
                 {
                     allUrls.Clear();
                     allUrlIndex = 1;
-                    label_state.Text = "保存章节……";
                     Thread t = new Thread(InsertDB);
                     t.Start();
                 }
             }
             else  //存数据库
             {
-                label_state.Text = "保存章节……";
                 Thread t = new Thread(InsertDB);
                 t.Start();
             }
@@ -383,10 +387,11 @@ namespace BilibiliProjects.NovelTest
         /// <summary>
         /// 获取章节列表的url
         /// </summary>
-        string GetChapterLink(Novel novel)
+        string GetChapterLink(Novel novel,int index1)
         {
+            string site = Tools.InitSource(index1, false);
             string link = "";
-            switch(Tools.source.ID)
+            switch(index1)
             {
                 case 0:
                     link= novel.indexUrl + "index.htm";
@@ -394,16 +399,16 @@ namespace BilibiliProjects.NovelTest
                 case 1:
                     string tmp = novel.indexUrl.TrimEnd('/');
                     int index = tmp.LastIndexOf("/");
-                    link = Tools.source.Site + "booklist" + tmp.Substring(index)+".html";
+                    link = site + "booklist" + tmp.Substring(index)+".html";
                     break;
                 case 2:
-                    link =Tools.source.Site+ novel.indexUrl + "page-1.html";
+                    link = site + novel.indexUrl + "page-1.html";
                     break;
                 case 3:
                     link = novel.indexUrl;
                     break;
                 case 4:
-                    link = Tools.source.Site + novel.indexUrl;
+                    link = site + novel.indexUrl;
                     break;
             }
             return link;
@@ -414,6 +419,13 @@ namespace BilibiliProjects.NovelTest
         /// </summary>
         void InsertDB()
         {
+            Invoke(new Action(delegate
+            {
+                p_form = new ProgressForm();
+                p_form.Show();
+                p_form.SetTitleAndProgress("章节保存中（0 / " + chapters.Count + "章）", 0);
+                p_form.BringToFront();
+            }));
             string sql = "select count(*) from chapters where webIndex=@ID and novel=@novel";
             List<SQLiteParameter> parameters = new List<SQLiteParameter>();
             parameters.Add(new SQLiteParameter("ID", Tools.source.ID));
@@ -435,16 +447,21 @@ namespace BilibiliProjects.NovelTest
                     sb.Append(tmpNovelName).Append("','");  //小说名
                     sb.Append(chapters[i].chapter).Append("',"); //章节名
                     sb.Append(Tools.source.ID).Append(",'");  //网站索引
-                    sb.Append(chapters[i].site).Append("');");  //小说地址
-                    if (i % 200 == 0 || i == chapters.Count - 1)
+                    sb.Append(chapters[i].site).Append("','',0);");  //小说地址
+                    if ((i+1) % 500 == 0 || i == chapters.Count - 1)
                     {
                         MySqlite.ExecSql(sb.ToString());
                         sb = new StringBuilder();
+                        Invoke(new Action(delegate
+                        {
+                            p_form.SetTitleAndProgress("章节保存中（"+(i+1)+" / " + chapters.Count + "章）", i *100f / chapters.Count);
+                        }));
                     }
                 }
             }
             Invoke(new Action(delegate
             {
+                p_form.Close();
                 label_state.Text = "";
             }));
         }
@@ -487,6 +504,10 @@ namespace BilibiliProjects.NovelTest
             {
                 e.Item.SubItems[0].ForeColor = Color.Red;
             }
+            else
+            {
+                e.Item.SubItems[0].ForeColor = UIColors.ForeColor;
+            }
         }
 
         private void listView2_DoubleClick(object sender, EventArgs e)
@@ -527,11 +548,13 @@ namespace BilibiliProjects.NovelTest
         {
             new ChaptersList("全部小说", true).ShowDialog();
         }
-
-        private void checkBox_night_mode_CheckedChanged(object sender, EventArgs e)
+        private void Search_VisibleChanged(object sender, EventArgs e)
         {
-            UIColors.SetNightMode(checkBox_night_mode.Checked);
-            UIColors.SetControlColors(this);
+        }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+            UIColors.SetContextMenuColor(contextMenuStrip1);
         }
     }
 }

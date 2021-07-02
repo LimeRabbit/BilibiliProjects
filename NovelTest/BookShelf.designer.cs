@@ -95,7 +95,7 @@ namespace BilibiliProjects.NovelTest
             // 
             // textBox_search
             // 
-            this.textBox_search.Location = new System.Drawing.Point(57, 18);
+            this.textBox_search.Location = new System.Drawing.Point(57, 28);
             this.textBox_search.Name = "textBox_search";
             this.textBox_search.Size = new System.Drawing.Size(193, 21);
             this.textBox_search.TabIndex = 10;
@@ -104,7 +104,7 @@ namespace BilibiliProjects.NovelTest
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 21);
+            this.label2.Location = new System.Drawing.Point(10, 31);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 12);
             this.label2.TabIndex = 9;
