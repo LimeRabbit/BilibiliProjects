@@ -70,6 +70,12 @@ namespace BilibiliProjects.NovelTest
                     case "Compress":
                         Setting.IsCompress = value != "0";
                         break;
+                    case "WhyReason":
+                        Setting.WhyReason = value != "0";
+                        break;
+                    case "DeletePS":
+                        Setting.DeletePS = value != "0";
+                        break;
                     case "FontFamily":
                         Setting.FontFamily = value;
                         break;
@@ -130,6 +136,16 @@ namespace BilibiliProjects.NovelTest
             parameters = new List<SQLiteParameter>();
             parameters.Add(new SQLiteParameter("key", "Compress"));  //压缩
             parameters.Add(new SQLiteParameter("value", Setting.IsCompress));
+            MySqlite.ExecSql(sql, parameters);
+
+            parameters = new List<SQLiteParameter>();
+            parameters.Add(new SQLiteParameter("key", "WhyReason"));  //实验性功能1
+            parameters.Add(new SQLiteParameter("value", Setting.WhyReason));
+            MySqlite.ExecSql(sql, parameters);
+
+            parameters = new List<SQLiteParameter>();
+            parameters.Add(new SQLiteParameter("key", "DeletePS"));  //实验性功能2
+            parameters.Add(new SQLiteParameter("value", Setting.DeletePS));
             MySqlite.ExecSql(sql, parameters);
 
             parameters = new List<SQLiteParameter>();

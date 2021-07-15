@@ -67,7 +67,7 @@ namespace BilibiliProjects.NovelTest
         void GetBlackWords()
         {
             blackWords = new List<BlackWord>();
-            string sql = "select words,insteadWords,type from blackWords order by length(words) desc";
+            string sql = "select words,insteadWords,type from blackWords order by date";
             DataTable table = MySqlite.GetData(sql);
             BlackWord word1;
             for (int i = 0; i < table.Rows.Count; i++)
@@ -108,6 +108,7 @@ namespace BilibiliProjects.NovelTest
             if (errorMsg != null)
             {
                 richTextBox1.Text = errorMsg;
+                Text = "获取章节错误";
             }
             else
             {
@@ -130,7 +131,6 @@ namespace BilibiliProjects.NovelTest
                         }
                         else  //本章获取完毕
                         {
-                            label_pagesite.Text = GetCurrentSite();
                             Text = "《" + novelName + "》 " + readtitle;
                             richTextBox1.Focus();
                             richTextBox1.SelectionStart = 0;
@@ -145,9 +145,12 @@ namespace BilibiliProjects.NovelTest
                         break;
                 }
             }
-            button1.Enabled = true;
-            button_next.Enabled = true;
-            button_pre.Enabled = true;
+            if (!hasNextPage)
+            {
+                button1.Enabled = true;
+                button_next.Enabled = true;
+                button_pre.Enabled = true;
+            }
         }
 
         private void ButtonRefresh_Click(object sender, EventArgs e)
@@ -195,6 +198,7 @@ namespace BilibiliProjects.NovelTest
                     {
                         label_pagesite.Text = GetCurrentSite();
                         Text = "《" + novelName + "》 " + chapter1 + " [本地]";
+                        readtitle = chapter1;
                         richTextBox1.Focus();
                         richTextBox1.SelectionStart = 0;
                         //将当期页的信息存入数据库
@@ -225,6 +229,7 @@ namespace BilibiliProjects.NovelTest
                 }
             }
 
+            label_pagesite.Text = GetCurrentSite();
             Text = "章节内容获取中……";
             richTextBox1.Text = "";
             button1.Enabled = false;
@@ -414,14 +419,14 @@ namespace BilibiliProjects.NovelTest
             if (tmpInt > -1)
                 s = s.Substring(0, tmpInt);
 
-            Regex r2 = new Regex("(PS：)|(ＰＳ：)|(PS:)|(ＰＳ:)", RegexOptions.IgnoreCase);
-            Match match = r2.Match(s);
-            int i = s.IndexOf(match.Value);
-            if (i > 100)  //去除作者写的PS之类的废话，如果在开头写PS之类的，就不要去掉
-                s = s.Substring(0, i).Trim();
+            
             //避免有形如 &#dddd; &#xdddd; 之类的字符串出现
             s = System.Web.HttpUtility.HtmlDecode(s);
             s = ReplaceWords(s);
+            if(Setting.WhyReason)
+                s = ExpFun1(s);  //实验性功能1
+            if (Setting.DeletePS)
+                s = ExpFun2(s); //实验性功能2
             return s.Trim();
         }
 
@@ -437,12 +442,86 @@ namespace BilibiliProjects.NovelTest
                 if (word.type == "词语" && s.Contains(word.word))
                 {
                     s = s.Replace(word.word, word.replacement);  //屏蔽词
-                    record.wordCount++;
+                    record.wordCount++; //统计次数
                 }
-                else if (word.type == "正则表达式" && Regex.IsMatch(s, word.word))
+                else if (word.type == "正则表达式" && Regex.IsMatch(s, word.word, RegexOptions.IgnoreCase))
                 {
-                    s = Regex.Replace(s, word.word, word.replacement);  //屏蔽的正则表达式
-                    record.regexCount++;
+                    s = Regex.Replace(s, word.word, word.replacement,RegexOptions.IgnoreCase);  //屏蔽的正则表达式，忽略大小写
+                    record.regexCount++; //统计次数
+                }
+            }
+            return s;
+        }
+        
+        /// <summary>
+        /// 实验性功能1：将“为什么……的原因”更改为“……的原因”
+        /// </summary>
+        /// <returns></returns>
+        string ExpFun1(string s)
+        {
+            string[] why = {"为什么","为何" };
+            foreach (string s1 in why)
+            {
+                int indexWhy = s.IndexOf(s1);
+                while (indexWhy > -1)
+                {
+                    int indexReason = s.IndexOf("的原因", indexWhy + 3);
+                    if (indexReason == -1)
+                        break;
+                    //“为什么……的原因”，中间的文字不能太多，不然会误判
+                    if (indexReason - indexWhy > 5 && indexReason - indexWhy < 30)
+                    {
+                        string tmp1 = s.Substring(0, indexWhy);
+                        //去掉“为什么”三个字
+                        string tmp2 = s.Substring(indexWhy + 3, indexReason - indexWhy);
+                        string tmp3 = s.Substring(indexReason + 3);
+                        s = tmp1 + tmp2 + tmp3;
+                        record.whyReason++; //统计次数
+                    }
+                    indexWhy = s.IndexOf(s1, indexReason);  //开始下一轮查找
+                }
+            }
+            
+            return s;
+        }
+
+        /// <summary>
+        /// 实验性功能2：去除作者写的PS之类的提示语
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        string ExpFun2(string s)
+        {
+            Regex r2 = new Regex("(PS：)|(ＰＳ：)|(PS:)|(ＰＳ:)", RegexOptions.IgnoreCase);
+            MatchCollection matches = r2.Matches(s);
+            int index;
+            string tmp1, tmp2;
+            for (int i = 0; i < matches.Count; i++)
+            {
+                index = s.LastIndexOf(matches[i].Value);
+                while(index>-1)
+                {
+                    //去除整段话语
+                    int indexLine = s.IndexOf(Environment.NewLine, index);
+                    tmp1 = s.Substring(0, index);
+                    if (indexLine == -1)
+                        s = tmp1;
+                    else
+                    {
+                        tmp2 = s.Substring(indexLine + Environment.NewLine.Length);
+                        s = tmp1 + tmp2;
+                    }
+                    index = s.LastIndexOf(matches[i].Value);
+                    record.delPS++; //统计次数
+                }
+            }
+            if((index=s.IndexOf("作者题外话"))>-1)
+            {
+                tmp1 = s.Substring(0, index);
+                int index1 = tmp1.LastIndexOf(Environment.NewLine);
+                if(index>-1)
+                {
+                    s = tmp1.Remove(index1);
                 }
             }
             return s;
@@ -575,6 +654,12 @@ namespace BilibiliProjects.NovelTest
             }
         }
         bool hasToday = true;  //record表中是否有今天的记录
+
+        private void checkBox_modify_CheckedChanged(object sender, EventArgs e)
+        {
+            richTextBox1.ReadOnly = !checkBox_modify.Checked;
+        }
+
         /// <summary>
         /// 获取记录
         /// </summary>
@@ -590,13 +675,17 @@ namespace BilibiliProjects.NovelTest
                 record.wordCount = 0;
                 record.regexCount = 0;
                 record.seconds = 0;
+                record.delPS = 0;
+                record.whyReason = 0;
             }
             else
             {
                 hasToday = true;
-                record.wordCount = Convert.ToInt32(dt.Rows[0][1]);
-                record.regexCount = Convert.ToInt32(dt.Rows[0][2]);
-                record.seconds = Convert.ToInt32(dt.Rows[0][3]);
+                int.TryParse(dt.Rows[0][1] + "", out record.wordCount);
+                int.TryParse(dt.Rows[0][2] + "", out record.regexCount);
+                int.TryParse(dt.Rows[0][3] + "", out record.whyReason);
+                int.TryParse(dt.Rows[0][4] + "", out record.delPS);
+                int.TryParse(dt.Rows[0][5] + "", out record.seconds);
             }
             
         }
@@ -609,15 +698,17 @@ namespace BilibiliProjects.NovelTest
             List<SQLiteParameter> parameters = new List<SQLiteParameter>();
             if(hasToday)
             {
-                sql = "update record set wordCount=@word,regexCount=@regex,readSeconds=@read where date=@date";
+                sql = "update record set wordCount=@word,regexCount=@regex,whyReason=@why,delPS=@del,readSeconds=@read where date=@date";
             }
             else
             {
-                sql = "insert into record values(@date,@word,@regex,@read)";
+                sql = "insert into record values(@date,@word,@regex,@why,@del,@read)";
             }
             parameters.Add(new SQLiteParameter("date", DateTime.Now.ToString("yyyy-MM-dd")));
             parameters.Add(new SQLiteParameter("word", record.wordCount));
             parameters.Add(new SQLiteParameter("regex", record.regexCount));
+            parameters.Add(new SQLiteParameter("why", record.whyReason));
+            parameters.Add(new SQLiteParameter("del", record.delPS));
             parameters.Add(new SQLiteParameter("read", record.seconds));
             MySqlite.ExecSql(sql, parameters);
         }
@@ -630,6 +721,8 @@ namespace BilibiliProjects.NovelTest
             time_start = DateTime.Now;
             record.wordCount = 0;
             record.regexCount = 0;
+            record.whyReason = 0;
+            record.delPS = 0;
             record.seconds = 0;
         }
     }

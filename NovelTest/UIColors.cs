@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 
 using System.Windows.Forms;
+using static System.Windows.Forms.Control;
 
 namespace BilibiliProjects
 {
@@ -27,26 +28,30 @@ namespace BilibiliProjects
             }
         }
 
+        /// <summary>
+        /// 把某个窗体的所有控件更改颜色
+        /// </summary>
+        /// <param name="f"></param>
         public static void SetControlColors(Form f)
         {
             f.BackColor = BackColor;
             f.ForeColor = ForeColor;
-            foreach (Control control in f.Controls)
+            SetViewColor(f.Controls);
+        }
+        //递归设置控件颜色
+        static void SetViewColor(ControlCollection controls)
+        {
+            foreach (Control control in controls)
             {
                 if (control is Button) continue;//按钮有默认样式，不设置颜色
-                if (IsExcept(control)) continue;
+                if (IsExcept(control)) continue;//有些控件不需要改颜色
                 if (control is LinkLabel label)  //链接颜色
                 {
                     label.LinkColor = LinkColor;
                 }
                 control.BackColor = BackColor;
                 control.ForeColor = ForeColor;
-                foreach (Control control1 in control.Controls)
-                {
-                    if (IsExcept(control1)) continue;
-                    control1.BackColor = BackColor;
-                    control1.ForeColor = ForeColor;
-                }
+                SetViewColor(control.Controls);
             }
         }
 

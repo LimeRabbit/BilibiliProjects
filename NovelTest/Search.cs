@@ -454,7 +454,8 @@ namespace BilibiliProjects.NovelTest
                         sb = new StringBuilder();
                         Invoke(new Action(delegate
                         {
-                            p_form.SetTitleAndProgress("章节保存中（"+(i+1)+" / " + chapters.Count + "章）", i *100f / chapters.Count);
+                            p_form.SetTitleAndProgress("章节保存中（"+(i+1)+" / " + chapters.Count + "章）",
+                                i *100f / chapters.Count);
                         }));
                     }
                 }

@@ -43,6 +43,7 @@ namespace BilibiliProjects.NovelTest
             this.button_save = new System.Windows.Forms.Button();
             this.linkLabel_copy = new System.Windows.Forms.LinkLabel();
             this.label_pagesite = new System.Windows.Forms.Label();
+            this.checkBox_modify = new System.Windows.Forms.CheckBox();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -216,11 +217,23 @@ namespace BilibiliProjects.NovelTest
             this.label_pagesite.Text = "小说网址";
             this.label_pagesite.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // checkBox_modify
+            // 
+            this.checkBox_modify.AutoSize = true;
+            this.checkBox_modify.Location = new System.Drawing.Point(336, 65);
+            this.checkBox_modify.Name = "checkBox_modify";
+            this.checkBox_modify.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_modify.TabIndex = 22;
+            this.checkBox_modify.Text = "修改内容";
+            this.checkBox_modify.UseVisualStyleBackColor = true;
+            this.checkBox_modify.CheckedChanged += new System.EventHandler(this.checkBox_modify_CheckedChanged);
+            // 
             // ReadNovel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(904, 711);
+            this.Controls.Add(this.checkBox_modify);
             this.Controls.Add(this.label_pagesite);
             this.Controls.Add(this.linkLabel_copy);
             this.Controls.Add(this.button_save);
@@ -246,6 +259,7 @@ namespace BilibiliProjects.NovelTest
             this.Controls.SetChildIndex(this.button_save, 0);
             this.Controls.SetChildIndex(this.linkLabel_copy, 0);
             this.Controls.SetChildIndex(this.label_pagesite, 0);
+            this.Controls.SetChildIndex(this.checkBox_modify, 0);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -267,6 +281,7 @@ namespace BilibiliProjects.NovelTest
         private System.Windows.Forms.Button button_save;
         private System.Windows.Forms.LinkLabel linkLabel_copy;
         private System.Windows.Forms.Label label_pagesite;
+        private System.Windows.Forms.CheckBox checkBox_modify;
     }
 }
 

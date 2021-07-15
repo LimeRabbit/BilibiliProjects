@@ -69,6 +69,7 @@ namespace BilibiliProjects.NovelTest
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Tag = "https://github.com/LimeRabbit/BilibiliProjects";
             this.linkLabel1.Text = "Github";
+            this.linkLabel1.Click += new System.EventHandler(this.linkLabel1_Click);
             // 
             // label2
             // 
@@ -89,6 +90,7 @@ namespace BilibiliProjects.NovelTest
             this.linkLabel2.TabStop = true;
             this.linkLabel2.Tag = "https://space.bilibili.com/316013542";
             this.linkLabel2.Text = "点击进入";
+            this.linkLabel2.Click += new System.EventHandler(this.linkLabel1_Click);
             // 
             // AboutForm
             // 

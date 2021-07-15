@@ -107,7 +107,8 @@ namespace BilibiliProjects
             //关键字黑名单，如果章节中出现这些词，将会替换成空。词语，类型(词语/正则表达式)，添加时间
             sql += "create table blackWords(words text,insteadWords text,type text,date text);";
             //屏蔽关键词的次数记录，以及阅读时间记录
-            sql += "create table record(date text,wordCount int,regexCount int,readSeconds int);";
+            //列的含义：日期，替换词语次数，替换正则表达式次数，实验性功能1，实验性功能2，阅读时长
+            sql += "create table record(date text,wordCount int,regexCount int,whyReason int,delPS int,readSeconds int);";
             //用户配置
             sql += "create table settings(key text, value text);";
             MySqlite.ExecSql(sql);
@@ -512,6 +513,10 @@ namespace BilibiliProjects
         public string date;
         public int wordCount;
         public int regexCount;
+        //将“为什么……的原因”改为“……的原因”
+        public int whyReason;
+        //删除作者写的PS之类的话
+        public int delPS;
         public int seconds;
         public string ReadTime
         {

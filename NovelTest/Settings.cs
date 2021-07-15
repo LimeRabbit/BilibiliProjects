@@ -29,22 +29,25 @@ namespace BilibiliProjects.NovelTest
             if (i > -1)
                 comboBox_font.SelectedIndex = i;
             trackBar_fontsize.Value = (int)Setting.FontSize;
+            label_scale.Text = "字号：" + Setting.FontSize;
 
-            //if (UIColors.IsUserMode)
-            {
-                label_backcolor.BackColor = UIColors.BackColor;
-                label_forecolor.BackColor = UIColors.ForeColor;
-                label_linkcolor.BackColor = UIColors.LinkColor;
-            }
+            label_backcolor.BackColor = UIColors.BackColor;
+            label_forecolor.BackColor = UIColors.ForeColor;
+            label_linkcolor.BackColor = UIColors.LinkColor;
             checkBox_mycolor.Checked = UIColors.IsUserMode;
             checkBox_nightmode.Checked = UIColors.IsNightMode;
             checkBox_autosave.Checked = Setting.AutoSave;
             checkBox_compress.Checked = Setting.IsCompress;
+            checkBox_ex1.Checked = Setting.WhyReason;
+            checkBox_ex2.Checked = Setting.DeletePS;
         }
 
         private void checkBox_mycolor_CheckedChanged(object sender, EventArgs e)
         {
-            checkBox_nightmode.Enabled = !checkBox_mycolor.Checked;
+            if(checkBox_mycolor.Checked)
+                checkBox_nightmode.Font = new Font(Font.FontFamily, Font.Size, FontStyle.Strikeout);
+            else
+                checkBox_nightmode.Font = new Font(Font.FontFamily, Font.Size, FontStyle.Regular);
             label_backcolor.Enabled = checkBox_mycolor.Checked;
             label_forecolor.Enabled = checkBox_mycolor.Checked;
             label_linkcolor.Enabled = checkBox_mycolor.Checked;
@@ -67,6 +70,8 @@ namespace BilibiliProjects.NovelTest
 
         private void checkBox_nightmode_CheckedChanged(object sender, EventArgs e)
         {
+            if (UIColors.IsUserMode)
+                return;
             UIColors.SetNightMode(checkBox_nightmode.Checked);
             UIColors.SetControlColors(this);
             if(parentForm != null)
@@ -126,7 +131,17 @@ namespace BilibiliProjects.NovelTest
         {
             label_preview.Font = Setting.Font;
             label_preview.Left = (groupBox3.Width - label_preview.Width) / 2;
-            label_preview.Top = (groupBox3.Height - label_preview.Height - label5.Bottom) / 2 + label5.Top;
+            label_preview.Top = (groupBox3.Height - label_preview.Height - label_scale.Bottom) / 2 + label_scale.Top;
+        }
+
+        private void checkBox_ex1_CheckedChanged(object sender, EventArgs e)
+        {
+            Setting.WhyReason = checkBox_ex1.Checked;
+        }
+
+        private void checkBox_ex2_CheckedChanged(object sender, EventArgs e)
+        {
+            Setting.DeletePS = checkBox_ex2.Checked;
         }
     }
 }
